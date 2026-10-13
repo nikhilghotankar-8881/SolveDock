@@ -50,6 +50,7 @@ describe('SolveDockViewProvider', () => {
       options: {},
       html: '',
       cspSource: 'vscode-webview:',
+      postMessage: vi.fn(),
       onDidReceiveMessage: vi.fn((cb) => {
         messageListener = cb;
         return { dispose: vi.fn() };

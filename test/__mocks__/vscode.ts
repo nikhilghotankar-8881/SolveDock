@@ -24,7 +24,21 @@ export const workspace = {
     },
   ],
   openTextDocument: vi.fn(),
+  createFileSystemWatcher: vi.fn().mockReturnValue({
+    onDidChange: vi.fn(),
+    onDidCreate: vi.fn(),
+    onDidDelete: vi.fn(),
+    dispose: vi.fn(),
+  }),
+  fs: {
+    readFile: vi.fn(),
+    writeFile: vi.fn(),
+  },
 };
+
+export class RelativePattern {
+  constructor(public base: any, public pattern: string) {}
+}
 
 export const Uri = {
   file: (path: string) => ({ fsPath: path, path, scheme: 'file' }),

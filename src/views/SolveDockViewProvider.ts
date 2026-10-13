@@ -1,11 +1,15 @@
 import * as vscode from 'vscode';
 import { SearchService } from '../search/SearchService';
 import { SolutionStore } from '../knowledge/SolutionStore';
-import { Solution } from '../models/Solution';
+import { Solution, SolutionStatus } from '../models/Solution';
+import { SolutionValidator } from '../knowledge/SolutionValidator';
 
 export class SolveDockViewProvider implements vscode.WebviewViewProvider {
   public static readonly viewType = 'solvedock.mainView';
   private _view?: vscode.WebviewView;
+  private _cachedSolutions: Solution[] = [];
+  private _filterTechnology: string = '';
+  private _filterStatus: string = '';
 
   constructor(
     private readonly _extensionUri: vscode.Uri,
@@ -27,28 +31,52 @@ export class SolveDockViewProvider implements vscode.WebviewViewProvider {
 
     webviewView.webview.html = this.getHtmlForWebview(webviewView.webview);
 
-    webviewView.webview.onDidReceiveMessage(async (data: { command: string; value?: string; filePath?: string }) => {
-      switch (data.command) {
-        case 'addSolution': {
-          vscode.commands.executeCommand('solvedock.createSolution');
-          break;
-        }
-        case 'searchQuery': {
-          this.handleSearchQuery(data.value || '');
-          break;
-        }
-        case 'openSolution': {
-          if (data.filePath) {
-            this.openSolutionFile(data.filePath);
+    webviewView.webview.onDidReceiveMessage(
+      async (data: {
+        command: string;
+        value?: string;
+        filePath?: string;
+        solutionId?: string;
+        techFilter?: string;
+        statusFilter?: string;
+      }) => {
+        switch (data.command) {
+          case 'addSolution': {
+            vscode.commands.executeCommand('solvedock.createSolution');
+            break;
           }
-          break;
-        }
-        case 'refreshKnowledge': {
-          vscode.commands.executeCommand('solvedock.refreshKnowledge');
-          break;
+          case 'searchQuery': {
+            this.handleSearchQuery(data.value || '');
+            break;
+          }
+          case 'openSolution': {
+            if (data.filePath) {
+              this.openSolutionFile(data.filePath);
+            }
+            break;
+          }
+          case 'editSolution': {
+            if (data.filePath) {
+              this.openSolutionFile(data.filePath);
+            }
+            break;
+          }
+          case 'filterChange': {
+            this._filterTechnology = data.techFilter || '';
+            this._filterStatus = data.statusFilter || '';
+            this.sendSavedSolutionsToView();
+            break;
+          }
+          case 'refreshKnowledge': {
+            vscode.commands.executeCommand('solvedock.refreshKnowledge');
+            break;
+          }
         }
       }
-    });
+    );
+
+    // Initial populate of saved solutions
+    this.sendSavedSolutionsToView();
   }
 
   private handleSearchQuery(query: string): void {
@@ -93,13 +121,45 @@ export class SolveDockViewProvider implements vscode.WebviewViewProvider {
     }
   }
 
+  public setSolutions(solutions: Solution[]): void {
+    this._cachedSolutions = solutions;
+    this.sendSavedSolutionsToView();
+  }
+
   public refreshView(solutions: Solution[]): void {
-    if (this._view) {
-      this._view.webview.postMessage({
-        type: 'knowledgeRefreshed',
-        totalCount: solutions.length,
-      });
+    this._cachedSolutions = solutions;
+    this.sendSavedSolutionsToView();
+  }
+
+  private sendSavedSolutionsToView(): void {
+    if (!this._view) {
+      return;
     }
+
+    // Apply filters
+    let filtered = this._cachedSolutions;
+    if (this._filterTechnology) {
+      filtered = filtered.filter((s) =>
+        s.technology.some((t) => t.toLowerCase() === this._filterTechnology.toLowerCase())
+      );
+    }
+    if (this._filterStatus) {
+      filtered = filtered.filter((s) => s.status === this._filterStatus);
+    }
+
+    // Collect available unique technologies for filter dropdown
+    const availableTechs = Array.from(
+      new Set(this._cachedSolutions.flatMap((s) => s.technology))
+    ).sort();
+
+    this._view.webview.postMessage({
+      type: 'savedSolutions',
+      solutions: filtered,
+      totalCount: this._cachedSolutions.length,
+      availableTechs,
+      currentTech: this._filterTechnology,
+      currentStatus: this._filterStatus,
+    });
   }
 
   public getHtmlForWebview(webview: vscode.Webview): string {
@@ -149,7 +209,7 @@ export class SolveDockViewProvider implements vscode.WebviewViewProvider {
     }
 
     .search-container {
-      margin-bottom: 14px;
+      margin-bottom: 12px;
     }
 
     .search-input {
@@ -168,7 +228,7 @@ export class SolveDockViewProvider implements vscode.WebviewViewProvider {
     }
 
     .action-container {
-      margin-bottom: 16px;
+      margin-bottom: 14px;
     }
 
     .btn-primary {
@@ -191,6 +251,23 @@ export class SolveDockViewProvider implements vscode.WebviewViewProvider {
       background-color: var(--vscode-button-hoverBackground);
     }
 
+    .filter-bar {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+
+    .filter-select {
+      flex: 1;
+      background: var(--vscode-dropdown-background);
+      color: var(--vscode-dropdown-foreground);
+      border: 1px solid var(--vscode-dropdown-border, transparent);
+      border-radius: 2px;
+      padding: 4px;
+      font-size: 11px;
+      outline: none;
+    }
+
     .section {
       margin-bottom: 16px;
     }
@@ -204,6 +281,9 @@ export class SolveDockViewProvider implements vscode.WebviewViewProvider {
       margin-bottom: 6px;
       padding-bottom: 2px;
       border-bottom: 1px solid var(--vscode-sideBarSectionHeader-border, transparent);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
     .empty-state {
@@ -334,18 +414,23 @@ export class SolveDockViewProvider implements vscode.WebviewViewProvider {
       max-width: 140px;
     }
 
-    .btn-open {
+    .card-actions {
+      display: flex;
+      gap: 4px;
+    }
+
+    .btn-action {
       background: transparent;
       border: 1px solid var(--vscode-button-background);
       color: var(--vscode-button-background);
       border-radius: 2px;
-      padding: 2px 8px;
+      padding: 2px 7px;
       font-size: 11px;
       font-weight: 500;
       cursor: pointer;
     }
 
-    .btn-open:hover {
+    .btn-action:hover {
       background: var(--vscode-button-background);
       color: var(--vscode-button-foreground);
     }
@@ -372,6 +457,19 @@ export class SolveDockViewProvider implements vscode.WebviewViewProvider {
     </button>
   </div>
 
+  <div class="filter-bar">
+    <select id="techSelect" class="filter-select">
+      <option value="">All Technologies</option>
+    </select>
+    <select id="statusSelect" class="filter-select">
+      <option value="">All Statuses</option>
+      <option value="verified">Verified</option>
+      <option value="reviewed">Reviewed</option>
+      <option value="draft">Draft</option>
+      <option value="outdated">Outdated</option>
+    </select>
+  </div>
+
   <div class="section">
     <div class="section-title">SEARCH RESULTS</div>
     <div id="searchResults">
@@ -389,10 +487,15 @@ export class SolveDockViewProvider implements vscode.WebviewViewProvider {
   </div>
 
   <div class="section">
-    <div class="section-title">SAVED SOLUTIONS</div>
-    <div id="savedSolutions" class="empty-state">
-      <div class="empty-state-title">No solutions found yet.</div>
-      <p class="empty-state-text">Create your first solution to start building your technical knowledge library.</p>
+    <div class="section-title">
+      <span>SAVED SOLUTIONS</span>
+      <span id="savedCount" style="font-size: 10px; opacity: 0.8;"></span>
+    </div>
+    <div id="savedSolutions">
+      <div class="empty-state">
+        <div class="empty-state-title">No solutions found yet.</div>
+        <p class="empty-state-text">Create your first solution to start building your technical knowledge library.</p>
+      </div>
     </div>
   </div>
 
@@ -402,6 +505,10 @@ export class SolveDockViewProvider implements vscode.WebviewViewProvider {
     const searchInput = document.getElementById('searchInput');
     const addBtn = document.getElementById('addBtn');
     const searchResults = document.getElementById('searchResults');
+    const savedSolutions = document.getElementById('savedSolutions');
+    const techSelect = document.getElementById('techSelect');
+    const statusSelect = document.getElementById('statusSelect');
+    const savedCount = document.getElementById('savedCount');
 
     if (addBtn) {
       addBtn.addEventListener('click', () => {
@@ -418,10 +525,27 @@ export class SolveDockViewProvider implements vscode.WebviewViewProvider {
       });
     }
 
+    function dispatchFilterChange() {
+      vscode.postMessage({
+        command: 'filterChange',
+        techFilter: techSelect ? techSelect.value : '',
+        statusFilter: statusSelect ? statusSelect.value : ''
+      });
+    }
+
+    if (techSelect) {
+      techSelect.addEventListener('change', dispatchFilterChange);
+    }
+    if (statusSelect) {
+      statusSelect.addEventListener('change', dispatchFilterChange);
+    }
+
     window.addEventListener('message', (event) => {
       const msg = event.data;
       if (msg.type === 'searchResults') {
         renderSearchResults(msg.results, msg.query);
+      } else if (msg.type === 'savedSolutions') {
+        renderSavedSolutions(msg.solutions, msg.totalCount, msg.availableTechs, msg.currentTech, msg.currentStatus);
       }
     });
 
@@ -435,21 +559,9 @@ export class SolveDockViewProvider implements vscode.WebviewViewProvider {
         .replace(/'/g, '&#39;');
     }
 
-    function renderSearchResults(results, query) {
-      if (!searchResults) return;
-
-      if (results === null) {
-        searchResults.innerHTML = '<div class="empty-state"><div class="empty-state-text">Type your query above to search local solutions.</div></div>';
-        return;
-      }
-
-      if (!results || results.length === 0) {
-        searchResults.innerHTML = '<div class="empty-state"><div class="empty-state-text">No relevant solutions found. Try a different search or record a new solution.</div></div>';
-        return;
-      }
-
+    function renderCards(solutions) {
       let html = '<div class="results-list">';
-      for (const item of results) {
+      for (const item of solutions) {
         const statusClass = 'status-' + (item.status || 'draft');
         const techPills = (item.technology || [])
           .map(t => '<span class="tech-pill">' + escapeHtml(t) + '</span>')
@@ -473,18 +585,21 @@ export class SolveDockViewProvider implements vscode.WebviewViewProvider {
 
         html += '  <div class="result-footer">';
         html += '    <span class="source-name" title="' + escapeHtml(item.sourcePath || '') + '">' + escapeHtml(filename) + '</span>';
+        html += '    <div class="card-actions">';
         if (item.sourcePath) {
-          html += '    <button class="btn-open" data-path="' + escapeHtml(item.sourcePath) + '">[Open Solution]</button>';
+          html += '      <button class="btn-action btn-open" data-path="' + escapeHtml(item.sourcePath) + '">[Open]</button>';
+          html += '      <button class="btn-action btn-edit" data-path="' + escapeHtml(item.sourcePath) + '">[Edit]</button>';
         }
+        html += '    </div>';
         html += '  </div>';
         html += '</div>';
       }
       html += '</div>';
+      return html;
+    }
 
-      searchResults.innerHTML = html;
-
-      // Bind click handlers to [Open Solution] buttons
-      const openButtons = searchResults.querySelectorAll('.btn-open');
+    function bindCardButtons(container) {
+      const openButtons = container.querySelectorAll('.btn-open');
       openButtons.forEach(btn => {
         btn.addEventListener('click', () => {
           const path = btn.getAttribute('data-path');
@@ -493,6 +608,63 @@ export class SolveDockViewProvider implements vscode.WebviewViewProvider {
           }
         });
       });
+
+      const editButtons = container.querySelectorAll('.btn-edit');
+      editButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const path = btn.getAttribute('data-path');
+          if (path) {
+            vscode.postMessage({ command: 'editSolution', filePath: path });
+          }
+        });
+      });
+    }
+
+    function renderSearchResults(results, query) {
+      if (!searchResults) return;
+
+      if (results === null) {
+        searchResults.innerHTML = '<div class="empty-state"><div class="empty-state-text">Type your query above to search local solutions.</div></div>';
+        return;
+      }
+
+      if (!results || results.length === 0) {
+        searchResults.innerHTML = '<div class="empty-state"><div class="empty-state-text">No relevant solutions found. Try a different search or record a new solution.</div></div>';
+        return;
+      }
+
+      searchResults.innerHTML = renderCards(results);
+      bindCardButtons(searchResults);
+    }
+
+    function renderSavedSolutions(solutions, totalCount, availableTechs, currentTech, currentStatus) {
+      if (!savedSolutions) return;
+
+      if (savedCount) {
+        savedCount.textContent = totalCount ? '(' + solutions.length + ' of ' + totalCount + ')' : '';
+      }
+
+      // Update tech filter options dynamically
+      if (techSelect && availableTechs) {
+        let optionsHtml = '<option value="">All Technologies</option>';
+        availableTechs.forEach(t => {
+          const selected = t === currentTech ? ' selected' : '';
+          optionsHtml += '<option value="' + escapeHtml(t) + '"' + selected + '>' + escapeHtml(t) + '</option>';
+        });
+        techSelect.innerHTML = optionsHtml;
+      }
+
+      if (statusSelect && currentStatus) {
+        statusSelect.value = currentStatus;
+      }
+
+      if (!solutions || solutions.length === 0) {
+        savedSolutions.innerHTML = '<div class="empty-state"><div class="empty-state-title">No solutions found yet.</div><p class="empty-state-text">Create your first solution to start building your technical knowledge library.</p></div>';
+        return;
+      }
+
+      savedSolutions.innerHTML = renderCards(solutions);
+      bindCardButtons(savedSolutions);
     }
   </script>
 </body>
