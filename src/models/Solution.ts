@@ -3,6 +3,13 @@
  */
 export type SolutionStatus = 'draft' | 'reviewed' | 'verified' | 'outdated';
 
+export const VALID_SOLUTION_STATUSES: readonly SolutionStatus[] = [
+  'draft',
+  'reviewed',
+  'verified',
+  'outdated',
+] as const;
+
 /**
  * Technical solution data model.
  */
@@ -18,6 +25,7 @@ export interface Solution {
   status: SolutionStatus;
   verifiedAt?: string;
   sourcePath?: string;
+  workspaceName?: string;
 }
 
 /**

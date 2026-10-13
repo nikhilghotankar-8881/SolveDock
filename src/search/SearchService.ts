@@ -66,6 +66,13 @@ export class SearchService {
   }
 
   /**
+   * Returns all currently indexed solutions.
+   */
+  public getAllSolutions(): Solution[] {
+    return Array.from(this._solutionsById.values());
+  }
+
+  /**
    * Adds or updates a single solution in the search index.
    */
   public updateSolution(solution: Solution): void {

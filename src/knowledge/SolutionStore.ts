@@ -1,7 +1,8 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import matter from 'gray-matter';
-import { Solution, SolutionFrontmatter, SolutionStatus } from '../models/Solution';
+import { Solution, SolutionFrontmatter, SolutionStatus, VALID_SOLUTION_STATUSES } from '../models/Solution';
+import { SolutionValidator } from './SolutionValidator';
 
 export interface ParseResult {
   success: boolean;
@@ -13,7 +14,18 @@ export interface ParseResult {
 export class SolutionStore {
   private readonly _solutionsDirName = path.join('.solvedock', 'solutions');
 
-  constructor(private readonly _workspaceRoot?: string) {}
+  constructor(
+    private readonly _workspaceRoot?: string,
+    private readonly _workspaceName?: string
+  ) {}
+
+  public get workspaceRoot(): string | undefined {
+    return this._workspaceRoot;
+  }
+
+  public get workspaceName(): string | undefined {
+    return this._workspaceName;
+  }
 
   /**
    * Returns the directory path where solutions are stored.
@@ -38,6 +50,7 @@ export class SolutionStore {
 
   /**
    * Sanitizes a title to generate a safe, deterministic filename.
+   * Strips all directory separators, parent traversal sequences, and unsafe characters.
    */
   public sanitizeFilename(idOrTitle: string): string {
     const safe = idOrTitle
@@ -47,6 +60,22 @@ export class SolutionStore {
       .replace(/-+/g, '-')
       .replace(/^-|-$/g, '');
     return `${safe || 'solution'}.md`;
+  }
+
+  /**
+   * Asserts and canonicalizes that a target path resides strictly inside the knowledge directory.
+   */
+  public assertPathInSolutionsDir(targetPath: string): string {
+    const solutionsDir = path.resolve(this.getSolutionsDir());
+    const resolvedTarget = path.resolve(targetPath);
+
+    // Ensure target path is strictly within solutionsDir
+    const relative = path.relative(solutionsDir, resolvedTarget);
+    if (relative.startsWith('..') || path.isAbsolute(relative)) {
+      throw new Error(`Security Exception: Access denied. Path "${targetPath}" is outside knowledge directory.`);
+    }
+
+    return resolvedTarget;
   }
 
   /**
@@ -84,10 +113,29 @@ export class SolutionStore {
 
   /**
    * Parses Markdown content with YAML frontmatter into a Solution object.
+   * Validates frontmatter, arrays, strings, dates, and sections without crashing.
    */
   public parseMarkdown(content: string, filePath?: string): ParseResult {
     try {
-      const parsed = matter(content);
+      if (!content || typeof content !== 'string' || content.trim().length === 0) {
+        return {
+          success: false,
+          error: 'Empty solution file.',
+          filePath,
+        };
+      }
+
+      let parsed: matter.GrayMatterFile<string>;
+      try {
+        parsed = matter(content);
+      } catch (yamlErr: any) {
+        return {
+          success: false,
+          error: `Malformed YAML frontmatter: ${yamlErr.message || String(yamlErr)}`,
+          filePath,
+        };
+      }
+
       const data = parsed.data as Partial<SolutionFrontmatter>;
 
       if (!data.id || typeof data.id !== 'string' || data.id.trim() === '') {
@@ -106,23 +154,39 @@ export class SolutionStore {
         };
       }
 
-      const validStatuses: SolutionStatus[] = ['draft', 'reviewed', 'verified', 'outdated'];
-      const status: SolutionStatus =
-        data.status && validStatuses.includes(data.status as SolutionStatus)
-          ? (data.status as SolutionStatus)
-          : 'draft';
+      const statusCandidate = typeof data.status === 'string' ? (data.status.toLowerCase() as SolutionStatus) : 'draft';
+      const status: SolutionStatus = VALID_SOLUTION_STATUSES.includes(statusCandidate)
+        ? statusCandidate
+        : 'draft';
 
-      const technology = Array.isArray(data.technology)
-        ? data.technology
-        : typeof data.technology === 'string'
-        ? [data.technology]
-        : [];
+      // Parse and clean technology array
+      let technology: string[] = [];
+      if (Array.isArray(data.technology)) {
+        technology = data.technology
+          .filter((t): t is string => typeof t === 'string' && t.trim().length > 0)
+          .map((t) => t.trim());
+      } else if (typeof data.technology === 'string' && data.technology.trim().length > 0) {
+        technology = [data.technology.trim()];
+      }
 
-      const tags = Array.isArray(data.tags)
-        ? data.tags
-        : typeof data.tags === 'string'
-        ? [data.tags]
-        : [];
+      // Parse and clean tags array
+      let tags: string[] = [];
+      if (Array.isArray(data.tags)) {
+        tags = data.tags
+          .filter((t): t is string => typeof t === 'string' && t.trim().length > 0)
+          .map((t) => t.trim());
+      } else if (typeof data.tags === 'string' && data.tags.trim().length > 0) {
+        tags = [data.tags.trim()];
+      }
+
+      // Parse verified date
+      let verifiedAt: string | undefined;
+      if (data.verifiedAt) {
+        const dateStr = String(data.verifiedAt).trim();
+        if (!isNaN(Date.parse(dateStr))) {
+          verifiedAt = dateStr;
+        }
+      }
 
       const sections = this.extractSections(parsed.content);
 
@@ -134,11 +198,22 @@ export class SolutionStore {
         problem: sections.problem,
         rootCause: sections.rootCause,
         resolution: sections.resolution,
-        environment: data.environment,
+        environment: typeof data.environment === 'string' ? data.environment.trim() : undefined,
         status,
-        verifiedAt: data.verifiedAt ? String(data.verifiedAt) : undefined,
+        verifiedAt,
         sourcePath: filePath,
+        workspaceName: this._workspaceName,
       };
+
+      // Perform validation check
+      const validation = SolutionValidator.validate(solution);
+      if (!validation.valid) {
+        return {
+          success: false,
+          error: `Validation failed: ${validation.errors.join('; ')}`,
+          filePath,
+        };
+      }
 
       return {
         success: true,
@@ -207,12 +282,25 @@ export class SolutionStore {
    * Reads and parses all solution files in the workspace.
    */
   public async loadAllSolutions(): Promise<{ solutions: Solution[]; errors: ParseResult[] }> {
+    if (!this._workspaceRoot) {
+      return { solutions: [], errors: [] };
+    }
+
     const dir = this.getSolutionsDir();
     if (!fs.existsSync(dir)) {
       return { solutions: [], errors: [] };
     }
 
-    const entries = await fs.promises.readdir(dir, { withFileTypes: true });
+    let entries: fs.Dirent[];
+    try {
+      entries = await fs.promises.readdir(dir, { withFileTypes: true });
+    } catch (err: any) {
+      return {
+        solutions: [],
+        errors: [{ success: false, error: `Cannot read solutions directory: ${err.message || String(err)}` }],
+      };
+    }
+
     const solutions: Solution[] = [];
     const errors: ParseResult[] = [];
     const seenIds = new Set<string>();
@@ -228,7 +316,7 @@ export class SolutionStore {
             if (seenIds.has(res.solution.id)) {
               errors.push({
                 success: false,
-                error: `Duplicate solution ID detected: "${res.solution.id}". File ignored.`,
+                error: `Duplicate solution ID detected: "${res.solution.id}". File ignored to prevent duplicate indexing.`,
                 filePath: fullPath,
               });
             } else {
@@ -265,6 +353,7 @@ export class SolutionStore {
 
     const filename = this.sanitizeFilename(solution.id);
     const targetPath = path.join(this.getSolutionsDir(), filename);
+    this.assertPathInSolutionsDir(targetPath);
 
     if (fs.existsSync(targetPath)) {
       throw new Error(`Target file "${filename}" already exists. Cannot overwrite.`);
@@ -277,12 +366,14 @@ export class SolutionStore {
   }
 
   /**
-   * Updates an existing solution file.
+   * Updates an existing solution file with path containment assertion.
    */
   public async updateSolution(solution: Solution): Promise<string> {
     if (!solution.sourcePath || !fs.existsSync(solution.sourcePath)) {
       throw new Error(`Original solution file not found at: ${solution.sourcePath}`);
     }
+
+    this.assertPathInSolutionsDir(solution.sourcePath);
 
     const markdown = this.serializeSolution(solution);
     await fs.promises.writeFile(solution.sourcePath, markdown, 'utf-8');

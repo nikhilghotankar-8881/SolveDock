@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { SolutionStore } from '../knowledge/SolutionStore';
 import { SearchService } from '../search/SearchService';
-import { SolutionValidator, SolutionInput } from '../knowledge/SolutionValidator';
+import { SolutionValidator } from '../knowledge/SolutionValidator';
 import { Solution, SolutionStatus } from '../models/Solution';
 
 export function registerCreateSolutionCommand(
