@@ -4,6 +4,11 @@
   "description": "Search, save, and reuse technical solutions inside VS Code.",
   "version": "0.1.0",
   "publisher": "solvedock",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nikhilghotankar-8881/SolveDock.git"
+  },
   "engines": {
     "vscode": "^1.90.0"
   },
