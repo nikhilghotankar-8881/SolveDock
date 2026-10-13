@@ -29,7 +29,7 @@ Update this table as you go. Do not start a phase until the one above it is mark
 | 0 | Product Planning | Finalized requirements and acceptance criteria | [ ] | — (deliverable: `PRD.md`) |
 | 1 | Extension Foundation | A working TypeScript extension | [x] | `chore: initialize SolveDock extension` |
 | 2 | SolveDock Interface | Sidebar, search field, and navigation | [x] | `feat: add SolveDock sidebar and commands` |
-| 3 | Knowledge Engine | Structured solution storage and parsing | [ ] | `feat: add local knowledge storage` |
+| 3 | Knowledge Engine | Structured solution storage and parsing | [x] | `feat: add local knowledge storage` |
 | 4 | Search Engine | Working local knowledge search | [ ] | `feat: implement local solution search` |
 | 5 | Solution Management | Create, view, edit, and organize solutions | [ ] | `feat: add solution creation and editing` |
 | 6 | Product Polish | Better usability and reliability | [ ] | `feat: improve SolveDock usability` |
