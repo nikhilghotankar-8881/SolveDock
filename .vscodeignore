@@ -1,0 +1,18 @@
+.vscode/**
+.vscode-test/**
+src/**
+test/**
+.systemlens/**
+.prettierrc
+tsconfig.json
+eslint.config.mjs
+vitest.config.*
+*.ts
+*.map
+*.log
+*.vsix
+PRD.md
+phases.md
+graph.json
+README (3).md
+architecture (1).md

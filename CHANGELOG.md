@@ -1,24 +1,26 @@
 # Changelog
 
-All user-visible changes to SolveDock are recorded here, release by release.
+All user-visible changes to SolveDock are documented in this file.
 
-Rules for this file:
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-- Add an entry only for a change that actually exists in the code.
-- Group entries under: Added, Changed, Fixed, Removed.
-- Move entries from `Unreleased` to a version heading when you release (for example `## [0.1.0] - YYYY-MM-DD`).
+## [0.1.0] - 2026-10-13
 
-## [Unreleased]
-
-Nothing released yet.
-
-<!--
-Planned scope of 0.1.0 (from the project plan): initial local search and solution management.
-Do not list planned items above as if they were done. Move them in only after they are built and tested.
-
-Planned later releases:
-0.2.0 - improved search, filters, and usability
-0.3.0 - optional AI-assisted knowledge search
-0.4.0 - first selected knowledge-source integration
-1.0.0 - mature release after sufficient testing and feedback
--->
+### Added
+- **Activity Bar & Sidebar UI:** Dedicated SolveDock container with custom anchor icon and interactive sidebar (`SolveDockViewProvider`).
+- **Local Knowledge Engine:** Structured file persistence in `.solvedock/solutions/` supporting YAML frontmatter and standard markdown sections (`## Problem`, `## Root Cause`, `## Solution`).
+- **Full-Text & Fuzzy Search:** Integrated MiniSearch service with tailored ranking weights across titles, error messages, technologies, and tags.
+- **Interactive Solution Creation:** Command `SolveDock: Create Solution` with guided validation prompts, safe deterministic filename generation, and duplicate ID prevention.
+- **Sidebar Usability Polish:**
+  - Clear search query button and `Esc` key shortcut.
+  - Recent search query chips (persisted locally, max 5).
+  - Favorites bookmarking (`★` toggle) persisted across editor sessions.
+  - Technology and Status dropdown filters.
+  - Inline solution preview cards with `[Open]` and `[Edit]` actions.
+- **Commands Registered in Command Palette:**
+  - `SolveDock: Open`
+  - `SolveDock: Search Solutions`
+  - `SolveDock: Create Solution`
+  - `SolveDock: Refresh Knowledge`
+- **Security & Integrity:** Strict Content Security Policy, zero external network access, directory sandboxing, and malformed markdown resilience.
