@@ -1,0 +1,86 @@
+{
+  "name": "solvedock",
+  "displayName": "SolveDock",
+  "description": "Search, save, and reuse technical solutions inside VS Code.",
+  "version": "0.1.0",
+  "publisher": "solvedock",
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "knowledge base",
+    "solutions",
+    "search",
+    "developer productivity",
+    "troubleshooting"
+  ],
+  "icon": "media/icon.png",
+  "activationEvents": [],
+  "main": "./out/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "solvedock",
+          "title": "SolveDock",
+          "icon": "media/solvedock-icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "solvedock": [
+        {
+          "type": "webview",
+          "id": "solvedock.mainView",
+          "name": "Developer Knowledge"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "solvedock.open",
+        "title": "SolveDock: Open"
+      },
+      {
+        "command": "solvedock.searchSolutions",
+        "title": "SolveDock: Search Solutions"
+      },
+      {
+        "command": "solvedock.createSolution",
+        "title": "SolveDock: Create Solution"
+      },
+      {
+        "command": "solvedock.refreshKnowledge",
+        "title": "SolveDock: Refresh Knowledge"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile",
+    "test": "vitest run",
+    "lint": "eslint src",
+    "format": "prettier --write \"src/**/*.ts\""
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.7",
+    "@types/node": "20.x",
+    "@types/vscode": "^1.90.0",
+    "@typescript-eslint/eslint-plugin": "^8.3.0",
+    "@typescript-eslint/parser": "^8.3.0",
+    "@vscode/test-electron": "^2.4.0",
+    "eslint": "^9.9.1",
+    "prettier": "^3.3.3",
+    "typescript": "^5.5.4",
+    "vitest": "^2.0.5"
+  },
+  "dependencies": {
+    "gray-matter": "^4.0.3",
+    "minisearch": "^7.1.0"
+  }
+}
