@@ -16,7 +16,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   const searchService = new SearchService();
 
   // Register SolveDock sidebar Webview View Provider
-  const provider = new SolveDockViewProvider(context.extensionUri, solutionStore, searchService);
+  const provider = new SolveDockViewProvider(context.extensionUri, solutionStore, searchService, context);
   const viewDisposable = vscode.window.registerWebviewViewProvider(
     SolveDockViewProvider.viewType,
     provider

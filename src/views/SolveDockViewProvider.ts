@@ -1,8 +1,7 @@
 import * as vscode from 'vscode';
 import { SearchService } from '../search/SearchService';
 import { SolutionStore } from '../knowledge/SolutionStore';
-import { Solution, SolutionStatus } from '../models/Solution';
-import { SolutionValidator } from '../knowledge/SolutionValidator';
+import { Solution } from '../models/Solution';
 
 export class SolveDockViewProvider implements vscode.WebviewViewProvider {
   public static readonly viewType = 'solvedock.mainView';
@@ -10,12 +9,21 @@ export class SolveDockViewProvider implements vscode.WebviewViewProvider {
   private _cachedSolutions: Solution[] = [];
   private _filterTechnology: string = '';
   private _filterStatus: string = '';
+  private _favorites: Set<string> = new Set();
+  private _recentSearches: string[] = [];
 
   constructor(
     private readonly _extensionUri: vscode.Uri,
     private readonly _solutionStore?: SolutionStore,
-    private readonly _searchService?: SearchService
-  ) {}
+    private readonly _searchService?: SearchService,
+    private readonly _context?: vscode.ExtensionContext
+  ) {
+    if (this._context) {
+      const savedFavorites = this._context.globalState.get<string[]>('solvedock.favorites', []);
+      this._favorites = new Set(savedFavorites);
+      this._recentSearches = this._context.globalState.get<string[]>('solvedock.recentSearches', []);
+    }
+  }
 
   public resolveWebviewView(
     webviewView: vscode.WebviewView,
@@ -51,13 +59,19 @@ export class SolveDockViewProvider implements vscode.WebviewViewProvider {
           }
           case 'openSolution': {
             if (data.filePath) {
-              this.openSolutionFile(data.filePath);
+              await this.openSolutionFile(data.filePath);
             }
             break;
           }
           case 'editSolution': {
             if (data.filePath) {
-              this.openSolutionFile(data.filePath);
+              await this.openSolutionFile(data.filePath);
+            }
+            break;
+          }
+          case 'toggleFavorite': {
+            if (data.solutionId) {
+              this.toggleFavorite(data.solutionId);
             }
             break;
           }
@@ -65,6 +79,10 @@ export class SolveDockViewProvider implements vscode.WebviewViewProvider {
             this._filterTechnology = data.techFilter || '';
             this._filterStatus = data.statusFilter || '';
             this.sendSavedSolutionsToView();
+            break;
+          }
+          case 'clearSearch': {
+            this.handleSearchQuery('');
             break;
           }
           case 'refreshKnowledge': {
@@ -75,8 +93,9 @@ export class SolveDockViewProvider implements vscode.WebviewViewProvider {
       }
     );
 
-    // Initial populate of saved solutions
+    // Initial populate
     this.sendSavedSolutionsToView();
+    this.sendRecentSearchesToView();
   }
 
   private handleSearchQuery(query: string): void {
@@ -93,6 +112,9 @@ export class SolveDockViewProvider implements vscode.WebviewViewProvider {
       return;
     }
 
+    // Record recent search query (local only, max 5, deduplicated)
+    this.addRecentSearch(trimmed);
+
     const searchResults = this._searchService ? this._searchService.search(trimmed) : [];
     const formatted = searchResults.map((r) => ({
       id: r.solution.id,
@@ -101,7 +123,11 @@ export class SolveDockViewProvider implements vscode.WebviewViewProvider {
       tags: r.solution.tags,
       status: r.solution.status,
       problem: r.solution.problem,
+      rootCause: r.solution.rootCause,
+      resolution: r.solution.resolution,
+      environment: r.solution.environment,
       sourcePath: r.solution.sourcePath,
+      isFavorite: this._favorites.has(r.solution.id),
       score: r.score,
     }));
 
@@ -112,18 +138,37 @@ export class SolveDockViewProvider implements vscode.WebviewViewProvider {
     });
   }
 
+  private addRecentSearch(query: string): void {
+    this._recentSearches = [query, ...this._recentSearches.filter((q) => q.toLowerCase() !== query.toLowerCase())].slice(0, 5);
+    if (this._context) {
+      this._context.globalState.update('solvedock.recentSearches', this._recentSearches);
+    }
+    this.sendRecentSearchesToView();
+  }
+
+  private toggleFavorite(id: string): void {
+    if (this._favorites.has(id)) {
+      this._favorites.delete(id);
+    } else {
+      this._favorites.add(id);
+    }
+
+    if (this._context) {
+      this._context.globalState.update('solvedock.favorites', Array.from(this._favorites));
+    }
+
+    this.sendSavedSolutionsToView();
+  }
+
   public async openSolutionFile(filePath: string): Promise<void> {
     try {
       const doc = await vscode.workspace.openTextDocument(filePath);
       await vscode.window.showTextDocument(doc);
     } catch (err: any) {
-      vscode.window.showErrorMessage(`Failed to open solution file: ${err.message || String(err)}`);
+      vscode.window.showErrorMessage(
+        `SolveDock couldn't open this solution file. Check whether the file is accessible: ${err.message || String(err)}`
+      );
     }
-  }
-
-  public setSolutions(solutions: Solution[]): void {
-    this._cachedSolutions = solutions;
-    this.sendSavedSolutionsToView();
   }
 
   public refreshView(solutions: Solution[]): void {
@@ -131,12 +176,20 @@ export class SolveDockViewProvider implements vscode.WebviewViewProvider {
     this.sendSavedSolutionsToView();
   }
 
+  private sendRecentSearchesToView(): void {
+    if (this._view) {
+      this._view.webview.postMessage({
+        type: 'recentSearches',
+        searches: this._recentSearches,
+      });
+    }
+  }
+
   private sendSavedSolutionsToView(): void {
     if (!this._view) {
       return;
     }
 
-    // Apply filters
     let filtered = this._cachedSolutions;
     if (this._filterTechnology) {
       filtered = filtered.filter((s) =>
@@ -147,14 +200,27 @@ export class SolveDockViewProvider implements vscode.WebviewViewProvider {
       filtered = filtered.filter((s) => s.status === this._filterStatus);
     }
 
-    // Collect available unique technologies for filter dropdown
     const availableTechs = Array.from(
       new Set(this._cachedSolutions.flatMap((s) => s.technology))
     ).sort();
 
+    const formatted = filtered.map((s) => ({
+      id: s.id,
+      title: s.title,
+      technology: s.technology,
+      tags: s.tags,
+      status: s.status,
+      problem: s.problem,
+      rootCause: s.rootCause,
+      resolution: s.resolution,
+      environment: s.environment,
+      sourcePath: s.sourcePath,
+      isFavorite: this._favorites.has(s.id),
+    }));
+
     this._view.webview.postMessage({
       type: 'savedSolutions',
-      solutions: filtered,
+      solutions: formatted,
       totalCount: this._cachedSolutions.length,
       availableTechs,
       currentTech: this._filterTechnology,
@@ -178,18 +244,19 @@ export class SolveDockViewProvider implements vscode.WebviewViewProvider {
       font-size: var(--vscode-font-size);
       color: var(--vscode-sideBar-foreground, var(--vscode-foreground));
       background-color: var(--vscode-sideBar-background, var(--vscode-editor-background));
-      padding: 12px;
+      padding: 10px;
       margin: 0;
       box-sizing: border-box;
       line-height: 1.4;
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     .header {
-      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
     }
 
     .brand-title {
@@ -202,19 +269,22 @@ export class SolveDockViewProvider implements vscode.WebviewViewProvider {
     }
 
     .subtitle {
-      font-size: 13px;
+      font-size: 12.5px;
       font-weight: 600;
       color: var(--vscode-foreground);
-      margin: 2px 0 0 0;
+      margin: 1px 0 0 0;
     }
 
     .search-container {
-      margin-bottom: 12px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      margin-bottom: 8px;
     }
 
     .search-input {
       width: 100%;
-      padding: 6px 10px;
+      padding: 6px 28px 6px 8px;
       background: var(--vscode-input-background);
       color: var(--vscode-input-foreground);
       border: 1px solid var(--vscode-input-border, transparent);
@@ -227,8 +297,45 @@ export class SolveDockViewProvider implements vscode.WebviewViewProvider {
       border-color: var(--vscode-focusBorder);
     }
 
+    .btn-clear {
+      position: absolute;
+      right: 6px;
+      background: transparent;
+      border: none;
+      color: var(--vscode-descriptionForeground);
+      cursor: pointer;
+      font-size: 12px;
+      padding: 2px 4px;
+      display: none;
+    }
+
+    .btn-clear:hover {
+      color: var(--vscode-foreground);
+    }
+
+    .recent-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-bottom: 10px;
+    }
+
+    .recent-chip {
+      font-size: 10px;
+      background: var(--vscode-badge-background);
+      color: var(--vscode-badge-foreground);
+      padding: 2px 6px;
+      border-radius: 10px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .recent-chip:hover {
+      opacity: 0.85;
+    }
+
     .action-container {
-      margin-bottom: 14px;
+      margin-bottom: 12px;
     }
 
     .btn-primary {
@@ -269,7 +376,7 @@ export class SolveDockViewProvider implements vscode.WebviewViewProvider {
     }
 
     .section {
-      margin-bottom: 16px;
+      margin-bottom: 14px;
     }
 
     .section-title {
@@ -287,9 +394,9 @@ export class SolveDockViewProvider implements vscode.WebviewViewProvider {
     }
 
     .empty-state {
-      padding: 12px 8px;
+      padding: 10px 8px;
       color: var(--vscode-descriptionForeground);
-      font-size: 12px;
+      font-size: 11.5px;
       background: var(--vscode-sideBar-dropBackground, rgba(128, 128, 128, 0.06));
       border-radius: 4px;
       border-left: 2px solid var(--vscode-activityBar-activeBorder, #007acc);
@@ -303,7 +410,7 @@ export class SolveDockViewProvider implements vscode.WebviewViewProvider {
 
     .empty-state-text {
       margin: 0;
-      font-size: 11.5px;
+      font-size: 11px;
       opacity: 0.9;
     }
 
@@ -317,15 +424,15 @@ export class SolveDockViewProvider implements vscode.WebviewViewProvider {
       background: var(--vscode-editor-background);
       border: 1px solid var(--vscode-widget-border, rgba(128, 128, 128, 0.2));
       border-radius: 4px;
-      padding: 8px 10px;
-      font-size: 12px;
+      padding: 8px;
+      font-size: 11.5px;
     }
 
     .result-header {
       display: flex;
       align-items: flex-start;
       justify-content: space-between;
-      gap: 8px;
+      gap: 6px;
       margin-bottom: 4px;
     }
 
@@ -333,15 +440,36 @@ export class SolveDockViewProvider implements vscode.WebviewViewProvider {
       font-weight: 600;
       color: var(--vscode-foreground);
       margin: 0;
-      font-size: 12.5px;
+      font-size: 12px;
+      flex: 1;
+    }
+
+    .header-icons {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .btn-star {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-size: 13px;
+      padding: 0 2px;
+      color: var(--vscode-descriptionForeground);
+      line-height: 1;
+    }
+
+    .btn-star.favorited {
+      color: #e3b341;
     }
 
     .status-badge {
-      font-size: 10px;
+      font-size: 9.5px;
       font-weight: 600;
       text-transform: uppercase;
-      padding: 2px 6px;
-      border-radius: 3px;
+      padding: 1px 5px;
+      border-radius: 2px;
       white-space: nowrap;
     }
 
@@ -372,33 +500,47 @@ export class SolveDockViewProvider implements vscode.WebviewViewProvider {
     .result-tech {
       display: flex;
       flex-wrap: wrap;
-      gap: 4px;
-      margin-bottom: 6px;
+      gap: 3px;
+      margin-bottom: 5px;
     }
 
     .tech-pill {
-      font-size: 10px;
-      padding: 1px 5px;
+      font-size: 9.5px;
+      padding: 1px 4px;
       background: var(--vscode-badge-background);
       color: var(--vscode-badge-foreground);
       border-radius: 2px;
     }
 
-    .result-problem {
-      font-size: 11.5px;
+    .result-preview {
+      margin-top: 4px;
+      border-top: 1px solid var(--vscode-widget-border, rgba(128, 128, 128, 0.1));
+      padding-top: 4px;
+    }
+
+    .preview-row {
+      margin-bottom: 3px;
+      font-size: 11px;
+    }
+
+    .preview-label {
+      font-weight: 600;
       color: var(--vscode-descriptionForeground);
-      margin-bottom: 6px;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
+      text-transform: uppercase;
+      font-size: 9.5px;
+      letter-spacing: 0.04em;
+    }
+
+    .preview-val {
+      color: var(--vscode-foreground);
+      word-break: break-word;
     }
 
     .result-footer {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      font-size: 11px;
+      font-size: 10.5px;
       margin-top: 6px;
       padding-top: 4px;
       border-top: 1px solid var(--vscode-widget-border, rgba(128, 128, 128, 0.1));
@@ -407,11 +549,11 @@ export class SolveDockViewProvider implements vscode.WebviewViewProvider {
     .source-name {
       color: var(--vscode-descriptionForeground);
       font-family: var(--vscode-editor-font-family);
-      font-size: 10.5px;
+      font-size: 10px;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
-      max-width: 140px;
+      max-width: 130px;
     }
 
     .card-actions {
@@ -424,8 +566,8 @@ export class SolveDockViewProvider implements vscode.WebviewViewProvider {
       border: 1px solid var(--vscode-button-background);
       color: var(--vscode-button-background);
       border-radius: 2px;
-      padding: 2px 7px;
-      font-size: 11px;
+      padding: 2px 6px;
+      font-size: 10.5px;
       font-weight: 500;
       cursor: pointer;
     }
@@ -438,8 +580,10 @@ export class SolveDockViewProvider implements vscode.WebviewViewProvider {
 </head>
 <body>
   <div class="header">
-    <div class="brand-title">SolveDock</div>
-    <div class="subtitle">Developer Knowledge</div>
+    <div>
+      <div class="brand-title">SolveDock</div>
+      <div class="subtitle">Developer Knowledge</div>
+    </div>
   </div>
 
   <div class="search-container">
@@ -447,9 +591,12 @@ export class SolveDockViewProvider implements vscode.WebviewViewProvider {
       id="searchInput" 
       class="search-input" 
       type="text" 
-      placeholder="Search technical solutions..." 
+      placeholder="Search solutions... (Esc to clear)" 
     />
+    <button id="clearSearchBtn" class="btn-clear" title="Clear query">✕</button>
   </div>
+
+  <div id="recentChips" class="recent-chips"></div>
 
   <div class="action-container">
     <button id="addBtn" class="btn-primary">
@@ -480,13 +627,6 @@ export class SolveDockViewProvider implements vscode.WebviewViewProvider {
   </div>
 
   <div class="section">
-    <div class="section-title">RECENT SOLUTIONS</div>
-    <div id="recentSolutions" class="empty-state">
-      <div class="empty-state-text">No recent solutions accessed yet.</div>
-    </div>
-  </div>
-
-  <div class="section">
     <div class="section-title">
       <span>SAVED SOLUTIONS</span>
       <span id="savedCount" style="font-size: 10px; opacity: 0.8;"></span>
@@ -503,6 +643,8 @@ export class SolveDockViewProvider implements vscode.WebviewViewProvider {
     const vscode = acquireVsCodeApi();
 
     const searchInput = document.getElementById('searchInput');
+    const clearSearchBtn = document.getElementById('clearSearchBtn');
+    const recentChips = document.getElementById('recentChips');
     const addBtn = document.getElementById('addBtn');
     const searchResults = document.getElementById('searchResults');
     const savedSolutions = document.getElementById('savedSolutions');
@@ -518,10 +660,31 @@ export class SolveDockViewProvider implements vscode.WebviewViewProvider {
 
     if (searchInput) {
       searchInput.addEventListener('input', (e) => {
-        vscode.postMessage({ 
-          command: 'searchQuery', 
-          value: e.target.value 
-        });
+        const val = e.target.value;
+        if (clearSearchBtn) {
+          clearSearchBtn.style.display = val ? 'block' : 'none';
+        }
+        vscode.postMessage({ command: 'searchQuery', value: val });
+      });
+
+      // Keyboard friendly workflow: Esc clears search query
+      searchInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          searchInput.value = '';
+          if (clearSearchBtn) clearSearchBtn.style.display = 'none';
+          vscode.postMessage({ command: 'clearSearch' });
+        }
+      });
+    }
+
+    if (clearSearchBtn) {
+      clearSearchBtn.addEventListener('click', () => {
+        if (searchInput) {
+          searchInput.value = '';
+          searchInput.focus();
+        }
+        clearSearchBtn.style.display = 'none';
+        vscode.postMessage({ command: 'clearSearch' });
       });
     }
 
@@ -533,12 +696,8 @@ export class SolveDockViewProvider implements vscode.WebviewViewProvider {
       });
     }
 
-    if (techSelect) {
-      techSelect.addEventListener('change', dispatchFilterChange);
-    }
-    if (statusSelect) {
-      statusSelect.addEventListener('change', dispatchFilterChange);
-    }
+    if (techSelect) techSelect.addEventListener('change', dispatchFilterChange);
+    if (statusSelect) statusSelect.addEventListener('change', dispatchFilterChange);
 
     window.addEventListener('message', (event) => {
       const msg = event.data;
@@ -546,6 +705,8 @@ export class SolveDockViewProvider implements vscode.WebviewViewProvider {
         renderSearchResults(msg.results, msg.query);
       } else if (msg.type === 'savedSolutions') {
         renderSavedSolutions(msg.solutions, msg.totalCount, msg.availableTechs, msg.currentTech, msg.currentStatus);
+      } else if (msg.type === 'recentSearches') {
+        renderRecentSearches(msg.searches);
       }
     });
 
@@ -559,10 +720,38 @@ export class SolveDockViewProvider implements vscode.WebviewViewProvider {
         .replace(/'/g, '&#39;');
     }
 
+    function renderRecentSearches(searches) {
+      if (!recentChips) return;
+      if (!searches || searches.length === 0) {
+        recentChips.innerHTML = '';
+        return;
+      }
+
+      let html = '';
+      searches.forEach(q => {
+        html += '<span class="recent-chip" data-query="' + escapeHtml(q) + '">' + escapeHtml(q) + '</span>';
+      });
+      recentChips.innerHTML = html;
+
+      recentChips.querySelectorAll('.recent-chip').forEach(chip => {
+        chip.addEventListener('click', () => {
+          const query = chip.getAttribute('data-query');
+          if (searchInput && query) {
+            searchInput.value = query;
+            if (clearSearchBtn) clearSearchBtn.style.display = 'block';
+            vscode.postMessage({ command: 'searchQuery', value: query });
+          }
+        });
+      });
+    }
+
     function renderCards(solutions) {
       let html = '<div class="results-list">';
       for (const item of solutions) {
         const statusClass = 'status-' + (item.status || 'draft');
+        const starClass = item.isFavorite ? 'favorited' : '';
+        const starIcon = item.isFavorite ? '★' : '☆';
+
         const techPills = (item.technology || [])
           .map(t => '<span class="tech-pill">' + escapeHtml(t) + '</span>')
           .join('');
@@ -572,16 +761,28 @@ export class SolveDockViewProvider implements vscode.WebviewViewProvider {
         html += '<div class="result-card">';
         html += '  <div class="result-header">';
         html += '    <div class="result-title">' + escapeHtml(item.title) + '</div>';
-        html += '    <span class="status-badge ' + statusClass + '">' + escapeHtml(item.status) + '</span>';
+        html += '    <div class="header-icons">';
+        html += '      <button class="btn-star ' + starClass + '" data-id="' + escapeHtml(item.id) + '" title="Bookmark favorite">' + starIcon + '</button>';
+        html += '      <span class="status-badge ' + statusClass + '">' + escapeHtml(item.status) + '</span>';
+        html += '    </div>';
         html += '  </div>';
 
         if (techPills) {
           html += '  <div class="result-tech">' + techPills + '</div>';
         }
 
+        // Inline Solution Preview without forcing to open file
+        html += '  <div class="result-preview">';
         if (item.problem) {
-          html += '  <div class="result-problem">' + escapeHtml(item.problem) + '</div>';
+          html += '    <div class="preview-row"><span class="preview-label">Problem: </span><span class="preview-val">' + escapeHtml(item.problem) + '</span></div>';
         }
+        if (item.resolution) {
+          html += '    <div class="preview-row"><span class="preview-label">Resolution: </span><span class="preview-val">' + escapeHtml(item.resolution) + '</span></div>';
+        }
+        if (item.environment) {
+          html += '    <div class="preview-row"><span class="preview-label">Env: </span><span class="preview-val">' + escapeHtml(item.environment) + '</span></div>';
+        }
+        html += '  </div>';
 
         html += '  <div class="result-footer">';
         html += '    <span class="source-name" title="' + escapeHtml(item.sourcePath || '') + '">' + escapeHtml(filename) + '</span>';
@@ -599,23 +800,24 @@ export class SolveDockViewProvider implements vscode.WebviewViewProvider {
     }
 
     function bindCardButtons(container) {
-      const openButtons = container.querySelectorAll('.btn-open');
-      openButtons.forEach(btn => {
+      container.querySelectorAll('.btn-open').forEach(btn => {
         btn.addEventListener('click', () => {
           const path = btn.getAttribute('data-path');
-          if (path) {
-            vscode.postMessage({ command: 'openSolution', filePath: path });
-          }
+          if (path) vscode.postMessage({ command: 'openSolution', filePath: path });
         });
       });
 
-      const editButtons = container.querySelectorAll('.btn-edit');
-      editButtons.forEach(btn => {
+      container.querySelectorAll('.btn-edit').forEach(btn => {
         btn.addEventListener('click', () => {
           const path = btn.getAttribute('data-path');
-          if (path) {
-            vscode.postMessage({ command: 'editSolution', filePath: path });
-          }
+          if (path) vscode.postMessage({ command: 'editSolution', filePath: path });
+        });
+      });
+
+      container.querySelectorAll('.btn-star').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = btn.getAttribute('data-id');
+          if (id) vscode.postMessage({ command: 'toggleFavorite', solutionId: id });
         });
       });
     }
@@ -644,7 +846,6 @@ export class SolveDockViewProvider implements vscode.WebviewViewProvider {
         savedCount.textContent = totalCount ? '(' + solutions.length + ' of ' + totalCount + ')' : '';
       }
 
-      // Update tech filter options dynamically
       if (techSelect && availableTechs) {
         let optionsHtml = '<option value="">All Technologies</option>';
         availableTechs.forEach(t => {
