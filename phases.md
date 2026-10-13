@@ -35,7 +35,7 @@ Update this table as you go. Do not start a phase until the one above it is mark
 | 6 | Product Polish | Better usability and reliability | [x] | `feat: improve SolveDock usability` |
 | 7 | Testing and Security | Tested extension with predictable behavior | [x] | `test: add extension reliability and security checks` |
 | 8 | Version Control and Documentation | Clean repository and release documentation | [x] | `docs: finalize README, CHANGELOG, LICENSE, and documentation` |
-| 9 | Packaging and Distribution | Installable VSIX package | [ ] | not specified in the plan |
+| 9 | Packaging and Distribution | Installable VSIX package | [x] | `chore: configure metadata and package VSIX for distribution` |
 | 10 | Marketplace Release | Public extension release | [ ] | not specified in the plan |
 | 11 | Future Development | Advanced search, AI assistance, and integrations | [ ] | — |
 
