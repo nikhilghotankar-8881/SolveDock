@@ -16,3 +16,16 @@ phases.md
 graph.json
 README (3).md
 architecture (1).md
+.agent/**
+.agents/**
+.solvedock/**
+.gsd/**
+.gemini/**
+adapters/**
+scripts/**
+docs/**
+model_capabilities.yaml
+PROJECT_RULES.md
+GSD-STYLE.md
+VERSION
+

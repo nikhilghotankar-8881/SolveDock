@@ -1,9 +1,2049 @@
 {
-  "nodes": [],
-  "edges": [],
+  "nodes": [
+    {
+      "id": "file:eslint.config.mjs",
+      "type": "file",
+      "name": "eslint.config.mjs",
+      "source_system": "javascript"
+    },
+    {
+      "id": "func:eslint.config.mjs:<module>",
+      "type": "function",
+      "name": "<module>",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "eslint.config.mjs",
+        "lineno": 1
+      }
+    },
+    {
+      "id": "file:out/commands/createSolution.js",
+      "type": "file",
+      "name": "out/commands/createSolution.js",
+      "source_system": "javascript"
+    },
+    {
+      "id": "func:out/commands/createSolution.js:ownKeys",
+      "type": "function",
+      "name": "ownKeys",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "out/commands/createSolution.js",
+        "lineno": 19
+      }
+    },
+    {
+      "id": "func:out/commands/createSolution.js:generateSolutionTemplate",
+      "type": "function",
+      "name": "generateSolutionTemplate",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "out/commands/createSolution.js",
+        "lineno": 45
+      }
+    },
+    {
+      "id": "func:out/commands/createSolution.js:getTargetStores",
+      "type": "function",
+      "name": "getTargetStores",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "out/commands/createSolution.js",
+        "lineno": 76
+      }
+    },
+    {
+      "id": "func:out/commands/createSolution.js:registerCreateSolutionCommand",
+      "type": "function",
+      "name": "registerCreateSolutionCommand",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "out/commands/createSolution.js",
+        "lineno": 82
+      }
+    },
+    {
+      "id": "file:out/commands/searchKnowledge.js",
+      "type": "file",
+      "name": "out/commands/searchKnowledge.js",
+      "source_system": "javascript"
+    },
+    {
+      "id": "func:out/commands/searchKnowledge.js:ownKeys",
+      "type": "function",
+      "name": "ownKeys",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "out/commands/searchKnowledge.js",
+        "lineno": 19
+      }
+    },
+    {
+      "id": "func:out/commands/searchKnowledge.js:registerSearchKnowledgeCommand",
+      "type": "function",
+      "name": "registerSearchKnowledgeCommand",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "out/commands/searchKnowledge.js",
+        "lineno": 38
+      }
+    },
+    {
+      "id": "file:out/extension.js",
+      "type": "file",
+      "name": "out/extension.js",
+      "source_system": "javascript"
+    },
+    {
+      "id": "func:out/extension.js:ownKeys",
+      "type": "function",
+      "name": "ownKeys",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "out/extension.js",
+        "lineno": 19
+      }
+    },
+    {
+      "id": "func:out/extension.js:activate",
+      "type": "function",
+      "name": "activate",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "out/extension.js",
+        "lineno": 48
+      }
+    },
+    {
+      "id": "func:out/extension.js:deactivate",
+      "type": "function",
+      "name": "deactivate",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "out/extension.js",
+        "lineno": 104
+      }
+    },
+    {
+      "id": "file:out/knowledge/SolutionStore.js",
+      "type": "file",
+      "name": "out/knowledge/SolutionStore.js",
+      "source_system": "javascript"
+    },
+    {
+      "id": "func:out/knowledge/SolutionStore.js:ownKeys",
+      "type": "function",
+      "name": "ownKeys",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "out/knowledge/SolutionStore.js",
+        "lineno": 19
+      }
+    },
+    {
+      "id": "func:out/knowledge/SolutionStore.js:constructor",
+      "type": "function",
+      "name": "constructor",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "out/knowledge/SolutionStore.js",
+        "lineno": 49
+      }
+    },
+    {
+      "id": "func:out/knowledge/SolutionStore.js:getSolutionsDir",
+      "type": "function",
+      "name": "getSolutionsDir",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "out/knowledge/SolutionStore.js",
+        "lineno": 62
+      }
+    },
+    {
+      "id": "func:out/knowledge/SolutionStore.js:ensureDirectory",
+      "type": "function",
+      "name": "ensureDirectory",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "out/knowledge/SolutionStore.js",
+        "lineno": 71
+      }
+    },
+    {
+      "id": "func:out/knowledge/SolutionStore.js:sanitizeFilename",
+      "type": "function",
+      "name": "sanitizeFilename",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "out/knowledge/SolutionStore.js",
+        "lineno": 82
+      }
+    },
+    {
+      "id": "func:out/knowledge/SolutionStore.js:assertPathInSolutionsDir",
+      "type": "function",
+      "name": "assertPathInSolutionsDir",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "out/knowledge/SolutionStore.js",
+        "lineno": 94
+      }
+    },
+    {
+      "id": "func:out/knowledge/SolutionStore.js:serializeSolution",
+      "type": "function",
+      "name": "serializeSolution",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "out/knowledge/SolutionStore.js",
+        "lineno": 107
+      }
+    },
+    {
+      "id": "func:out/knowledge/SolutionStore.js:parseMarkdown",
+      "type": "function",
+      "name": "parseMarkdown",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "out/knowledge/SolutionStore.js",
+        "lineno": 136
+      }
+    },
+    {
+      "id": "func:out/knowledge/SolutionStore.js:extractSections",
+      "type": "function",
+      "name": "extractSections",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "out/knowledge/SolutionStore.js",
+        "lineno": 244
+      }
+    },
+    {
+      "id": "func:out/knowledge/SolutionStore.js:loadAllSolutions",
+      "type": "function",
+      "name": "loadAllSolutions",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "out/knowledge/SolutionStore.js",
+        "lineno": 287
+      }
+    },
+    {
+      "id": "func:out/knowledge/SolutionStore.js:saveSolution",
+      "type": "function",
+      "name": "saveSolution",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "out/knowledge/SolutionStore.js",
+        "lineno": 345
+      }
+    },
+    {
+      "id": "func:out/knowledge/SolutionStore.js:updateSolution",
+      "type": "function",
+      "name": "updateSolution",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "out/knowledge/SolutionStore.js",
+        "lineno": 365
+      }
+    },
+    {
+      "id": "file:out/knowledge/SolutionValidator.js",
+      "type": "file",
+      "name": "out/knowledge/SolutionValidator.js",
+      "source_system": "javascript"
+    },
+    {
+      "id": "func:out/knowledge/SolutionValidator.js:normalize",
+      "type": "function",
+      "name": "normalize",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "out/knowledge/SolutionValidator.js",
+        "lineno": 81
+      }
+    },
+    {
+      "id": "file:out/knowledge/WorkspaceManager.js",
+      "type": "file",
+      "name": "out/knowledge/WorkspaceManager.js",
+      "source_system": "javascript"
+    },
+    {
+      "id": "func:out/knowledge/WorkspaceManager.js:ownKeys",
+      "type": "function",
+      "name": "ownKeys",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "out/knowledge/WorkspaceManager.js",
+        "lineno": 19
+      }
+    },
+    {
+      "id": "func:out/knowledge/WorkspaceManager.js:constructor",
+      "type": "function",
+      "name": "constructor",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "out/knowledge/WorkspaceManager.js",
+        "lineno": 48
+      }
+    },
+    {
+      "id": "func:out/knowledge/WorkspaceManager.js:onDidUpdate",
+      "type": "function",
+      "name": "onDidUpdate",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "out/knowledge/WorkspaceManager.js",
+        "lineno": 51
+      }
+    },
+    {
+      "id": "func:out/knowledge/WorkspaceManager.js:initialize",
+      "type": "function",
+      "name": "initialize",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "out/knowledge/WorkspaceManager.js",
+        "lineno": 57
+      }
+    },
+    {
+      "id": "func:out/knowledge/WorkspaceManager.js:getStores",
+      "type": "function",
+      "name": "getStores",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "out/knowledge/WorkspaceManager.js",
+        "lineno": 86
+      }
+    },
+    {
+      "id": "func:out/knowledge/WorkspaceManager.js:getDefaultStore",
+      "type": "function",
+      "name": "getDefaultStore",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "out/knowledge/WorkspaceManager.js",
+        "lineno": 92
+      }
+    },
+    {
+      "id": "func:out/knowledge/WorkspaceManager.js:getStoreForPath",
+      "type": "function",
+      "name": "getStoreForPath",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "out/knowledge/WorkspaceManager.js",
+        "lineno": 99
+      }
+    },
+    {
+      "id": "func:out/knowledge/WorkspaceManager.js:reloadAll",
+      "type": "function",
+      "name": "reloadAll",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "out/knowledge/WorkspaceManager.js",
+        "lineno": 110
+      }
+    },
+    {
+      "id": "func:out/knowledge/WorkspaceManager.js:handleFileChange",
+      "type": "function",
+      "name": "handleFileChange",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "out/knowledge/WorkspaceManager.js",
+        "lineno": 127
+      }
+    },
+    {
+      "id": "func:out/knowledge/WorkspaceManager.js:notifyUpdate",
+      "type": "function",
+      "name": "notifyUpdate",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "out/knowledge/WorkspaceManager.js",
+        "lineno": 140
+      }
+    },
+    {
+      "id": "func:out/knowledge/WorkspaceManager.js:getAllCachedSolutions",
+      "type": "function",
+      "name": "getAllCachedSolutions",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "out/knowledge/WorkspaceManager.js",
+        "lineno": 146
+      }
+    },
+    {
+      "id": "func:out/knowledge/WorkspaceManager.js:handleFoldersChanged",
+      "type": "function",
+      "name": "handleFoldersChanged",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "out/knowledge/WorkspaceManager.js",
+        "lineno": 152
+      }
+    },
+    {
+      "id": "func:out/knowledge/WorkspaceManager.js:disposeWatchers",
+      "type": "function",
+      "name": "disposeWatchers",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "out/knowledge/WorkspaceManager.js",
+        "lineno": 185
+      }
+    },
+    {
+      "id": "func:out/knowledge/WorkspaceManager.js:dispose",
+      "type": "function",
+      "name": "dispose",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "out/knowledge/WorkspaceManager.js",
+        "lineno": 190
+      }
+    },
+    {
+      "id": "file:out/models/Solution.js",
+      "type": "file",
+      "name": "out/models/Solution.js",
+      "source_system": "javascript"
+    },
+    {
+      "id": "func:out/models/Solution.js:<module>",
+      "type": "function",
+      "name": "<module>",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "out/models/Solution.js",
+        "lineno": 1
+      }
+    },
+    {
+      "id": "file:out/search/SearchService.js",
+      "type": "file",
+      "name": "out/search/SearchService.js",
+      "source_system": "javascript"
+    },
+    {
+      "id": "func:out/search/SearchService.js:constructor",
+      "type": "function",
+      "name": "constructor",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "out/search/SearchService.js",
+        "lineno": 11
+      }
+    },
+    {
+      "id": "func:out/search/SearchService.js:createMiniSearchInstance",
+      "type": "function",
+      "name": "createMiniSearchInstance",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "out/search/SearchService.js",
+        "lineno": 14
+      }
+    },
+    {
+      "id": "func:out/search/SearchService.js:indexSolutions",
+      "type": "function",
+      "name": "indexSolutions",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "out/search/SearchService.js",
+        "lineno": 45
+      }
+    },
+    {
+      "id": "func:out/search/SearchService.js:getAllSolutions",
+      "type": "function",
+      "name": "getAllSolutions",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "out/search/SearchService.js",
+        "lineno": 58
+      }
+    },
+    {
+      "id": "func:out/search/SearchService.js:updateSolution",
+      "type": "function",
+      "name": "updateSolution",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "out/search/SearchService.js",
+        "lineno": 64
+      }
+    },
+    {
+      "id": "func:out/search/SearchService.js:removeSolution",
+      "type": "function",
+      "name": "removeSolution",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "out/search/SearchService.js",
+        "lineno": 74
+      }
+    },
+    {
+      "id": "func:out/search/SearchService.js:search",
+      "type": "function",
+      "name": "search",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "out/search/SearchService.js",
+        "lineno": 84
+      }
+    },
+    {
+      "id": "file:out/views/SolveDockViewProvider.js",
+      "type": "file",
+      "name": "out/views/SolveDockViewProvider.js",
+      "source_system": "javascript"
+    },
+    {
+      "id": "func:out/views/SolveDockViewProvider.js:ownKeys",
+      "type": "function",
+      "name": "ownKeys",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "out/views/SolveDockViewProvider.js",
+        "lineno": 19
+      }
+    },
+    {
+      "id": "func:out/views/SolveDockViewProvider.js:constructor",
+      "type": "function",
+      "name": "constructor",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "out/views/SolveDockViewProvider.js",
+        "lineno": 50
+      }
+    },
+    {
+      "id": "func:out/views/SolveDockViewProvider.js:resolveWebviewView",
+      "type": "function",
+      "name": "resolveWebviewView",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "out/views/SolveDockViewProvider.js",
+        "lineno": 61
+      }
+    },
+    {
+      "id": "func:out/views/SolveDockViewProvider.js:validateIncomingMessage",
+      "type": "function",
+      "name": "validateIncomingMessage",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "out/views/SolveDockViewProvider.js",
+        "lineno": 117
+      }
+    },
+    {
+      "id": "func:out/views/SolveDockViewProvider.js:handleOpenSolution",
+      "type": "function",
+      "name": "handleOpenSolution",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "out/views/SolveDockViewProvider.js",
+        "lineno": 160
+      }
+    },
+    {
+      "id": "func:out/views/SolveDockViewProvider.js:openSolutionFile",
+      "type": "function",
+      "name": "openSolutionFile",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "out/views/SolveDockViewProvider.js",
+        "lineno": 168
+      }
+    },
+    {
+      "id": "func:out/views/SolveDockViewProvider.js:handleSearchQuery",
+      "type": "function",
+      "name": "handleSearchQuery",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "out/views/SolveDockViewProvider.js",
+        "lineno": 182
+      }
+    },
+    {
+      "id": "func:out/views/SolveDockViewProvider.js:addRecentSearch",
+      "type": "function",
+      "name": "addRecentSearch",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "out/views/SolveDockViewProvider.js",
+        "lineno": 217
+      }
+    },
+    {
+      "id": "func:out/views/SolveDockViewProvider.js:toggleFavorite",
+      "type": "function",
+      "name": "toggleFavorite",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "out/views/SolveDockViewProvider.js",
+        "lineno": 224
+      }
+    },
+    {
+      "id": "func:out/views/SolveDockViewProvider.js:setSolutions",
+      "type": "function",
+      "name": "setSolutions",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "out/views/SolveDockViewProvider.js",
+        "lineno": 236
+      }
+    },
+    {
+      "id": "func:out/views/SolveDockViewProvider.js:refreshView",
+      "type": "function",
+      "name": "refreshView",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "out/views/SolveDockViewProvider.js",
+        "lineno": 240
+      }
+    },
+    {
+      "id": "func:out/views/SolveDockViewProvider.js:sendRecentSearchesToView",
+      "type": "function",
+      "name": "sendRecentSearchesToView",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "out/views/SolveDockViewProvider.js",
+        "lineno": 244
+      }
+    },
+    {
+      "id": "func:out/views/SolveDockViewProvider.js:sendSavedSolutionsToView",
+      "type": "function",
+      "name": "sendSavedSolutionsToView",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "out/views/SolveDockViewProvider.js",
+        "lineno": 252
+      }
+    },
+    {
+      "id": "func:out/views/SolveDockViewProvider.js:getHtmlForWebview",
+      "type": "function",
+      "name": "getHtmlForWebview",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "out/views/SolveDockViewProvider.js",
+        "lineno": 288
+      }
+    },
+    {
+      "id": "func:out/views/SolveDockViewProvider.js:dispatchFilterChange",
+      "type": "function",
+      "name": "dispatchFilterChange",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "out/views/SolveDockViewProvider.js",
+        "lineno": 755
+      }
+    },
+    {
+      "id": "func:out/views/SolveDockViewProvider.js:escapeHtml",
+      "type": "function",
+      "name": "escapeHtml",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "out/views/SolveDockViewProvider.js",
+        "lineno": 777
+      }
+    },
+    {
+      "id": "func:out/views/SolveDockViewProvider.js:renderRecentSearches",
+      "type": "function",
+      "name": "renderRecentSearches",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "out/views/SolveDockViewProvider.js",
+        "lineno": 787
+      }
+    },
+    {
+      "id": "func:out/views/SolveDockViewProvider.js:renderCards",
+      "type": "function",
+      "name": "renderCards",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "out/views/SolveDockViewProvider.js",
+        "lineno": 812
+      }
+    },
+    {
+      "id": "func:out/views/SolveDockViewProvider.js:bindCardButtons",
+      "type": "function",
+      "name": "bindCardButtons",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "out/views/SolveDockViewProvider.js",
+        "lineno": 865
+      }
+    },
+    {
+      "id": "func:out/views/SolveDockViewProvider.js:renderSearchResults",
+      "type": "function",
+      "name": "renderSearchResults",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "out/views/SolveDockViewProvider.js",
+        "lineno": 888
+      }
+    },
+    {
+      "id": "func:out/views/SolveDockViewProvider.js:renderSavedSolutions",
+      "type": "function",
+      "name": "renderSavedSolutions",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "out/views/SolveDockViewProvider.js",
+        "lineno": 905
+      }
+    },
+    {
+      "id": "func:out/views/SolveDockViewProvider.js:getNonce",
+      "type": "function",
+      "name": "getNonce",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "out/views/SolveDockViewProvider.js",
+        "lineno": 944
+      }
+    },
+    {
+      "id": "file:scripts/search_repo.sh",
+      "type": "file",
+      "name": "scripts/search_repo.sh",
+      "source_system": "universal"
+    },
+    {
+      "id": "file:scripts/setup_search.sh",
+      "type": "file",
+      "name": "scripts/setup_search.sh",
+      "source_system": "universal"
+    },
+    {
+      "id": "file:scripts/validate-agents.sh",
+      "type": "file",
+      "name": "scripts/validate-agents.sh",
+      "source_system": "universal"
+    },
+    {
+      "id": "file:scripts/validate-all.sh",
+      "type": "file",
+      "name": "scripts/validate-all.sh",
+      "source_system": "universal"
+    },
+    {
+      "id": "file:scripts/validate-encoding.sh",
+      "type": "file",
+      "name": "scripts/validate-encoding.sh",
+      "source_system": "universal"
+    },
+    {
+      "id": "file:scripts/validate-skills.sh",
+      "type": "file",
+      "name": "scripts/validate-skills.sh",
+      "source_system": "universal"
+    },
+    {
+      "id": "file:scripts/validate-templates.sh",
+      "type": "file",
+      "name": "scripts/validate-templates.sh",
+      "source_system": "universal"
+    },
+    {
+      "id": "file:scripts/validate-workflows.sh",
+      "type": "file",
+      "name": "scripts/validate-workflows.sh",
+      "source_system": "universal"
+    },
+    {
+      "id": "file:src/commands/createSolution.ts",
+      "type": "file",
+      "name": "src/commands/createSolution.ts",
+      "source_system": "javascript"
+    },
+    {
+      "id": "func:src/commands/createSolution.ts:generateSolutionTemplate",
+      "type": "function",
+      "name": "generateSolutionTemplate",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "src/commands/createSolution.ts",
+        "lineno": 13
+      }
+    },
+    {
+      "id": "func:src/commands/createSolution.ts:getTargetStores",
+      "type": "function",
+      "name": "getTargetStores",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "src/commands/createSolution.ts",
+        "lineno": 45
+      }
+    },
+    {
+      "id": "func:src/commands/createSolution.ts:registerCreateSolutionCommand",
+      "type": "function",
+      "name": "registerCreateSolutionCommand",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "src/commands/createSolution.ts",
+        "lineno": 52
+      }
+    },
+    {
+      "id": "file:src/commands/searchKnowledge.ts",
+      "type": "file",
+      "name": "src/commands/searchKnowledge.ts",
+      "source_system": "javascript"
+    },
+    {
+      "id": "func:src/commands/searchKnowledge.ts:registerSearchKnowledgeCommand",
+      "type": "function",
+      "name": "registerSearchKnowledgeCommand",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "src/commands/searchKnowledge.ts",
+        "lineno": 4
+      }
+    },
+    {
+      "id": "file:src/extension.ts",
+      "type": "file",
+      "name": "src/extension.ts",
+      "source_system": "javascript"
+    },
+    {
+      "id": "func:src/extension.ts:activate",
+      "type": "function",
+      "name": "activate",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "src/extension.ts",
+        "lineno": 13
+      }
+    },
+    {
+      "id": "func:src/extension.ts:deactivate",
+      "type": "function",
+      "name": "deactivate",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "src/extension.ts",
+        "lineno": 99
+      }
+    },
+    {
+      "id": "file:src/knowledge/SolutionStore.ts",
+      "type": "file",
+      "name": "src/knowledge/SolutionStore.ts",
+      "source_system": "javascript"
+    },
+    {
+      "id": "func:src/knowledge/SolutionStore.ts:<module>",
+      "type": "function",
+      "name": "<module>",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "src/knowledge/SolutionStore.ts",
+        "lineno": 1
+      }
+    },
+    {
+      "id": "file:src/knowledge/SolutionValidator.ts",
+      "type": "file",
+      "name": "src/knowledge/SolutionValidator.ts",
+      "source_system": "javascript"
+    },
+    {
+      "id": "func:src/knowledge/SolutionValidator.ts:normalize",
+      "type": "function",
+      "name": "normalize",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "src/knowledge/SolutionValidator.ts",
+        "lineno": 103
+      }
+    },
+    {
+      "id": "file:src/knowledge/WorkspaceManager.ts",
+      "type": "file",
+      "name": "src/knowledge/WorkspaceManager.ts",
+      "source_system": "javascript"
+    },
+    {
+      "id": "func:src/knowledge/WorkspaceManager.ts:constructor",
+      "type": "function",
+      "name": "constructor",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "src/knowledge/WorkspaceManager.ts",
+        "lineno": 20
+      }
+    },
+    {
+      "id": "file:src/models/Solution.ts",
+      "type": "file",
+      "name": "src/models/Solution.ts",
+      "source_system": "javascript"
+    },
+    {
+      "id": "func:src/models/Solution.ts:<module>",
+      "type": "function",
+      "name": "<module>",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "src/models/Solution.ts",
+        "lineno": 1
+      }
+    },
+    {
+      "id": "file:src/search/SearchService.ts",
+      "type": "file",
+      "name": "src/search/SearchService.ts",
+      "source_system": "javascript"
+    },
+    {
+      "id": "func:src/search/SearchService.ts:constructor",
+      "type": "function",
+      "name": "constructor",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "src/search/SearchService.ts",
+        "lineno": 19
+      }
+    },
+    {
+      "id": "file:src/views/SolveDockViewProvider.ts",
+      "type": "file",
+      "name": "src/views/SolveDockViewProvider.ts",
+      "source_system": "javascript"
+    },
+    {
+      "id": "func:src/views/SolveDockViewProvider.ts:dispatchFilterChange",
+      "type": "function",
+      "name": "dispatchFilterChange",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "src/views/SolveDockViewProvider.ts",
+        "lineno": 777
+      }
+    },
+    {
+      "id": "func:src/views/SolveDockViewProvider.ts:escapeHtml",
+      "type": "function",
+      "name": "escapeHtml",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "src/views/SolveDockViewProvider.ts",
+        "lineno": 799
+      }
+    },
+    {
+      "id": "func:src/views/SolveDockViewProvider.ts:renderRecentSearches",
+      "type": "function",
+      "name": "renderRecentSearches",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "src/views/SolveDockViewProvider.ts",
+        "lineno": 809
+      }
+    },
+    {
+      "id": "func:src/views/SolveDockViewProvider.ts:renderCards",
+      "type": "function",
+      "name": "renderCards",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "src/views/SolveDockViewProvider.ts",
+        "lineno": 834
+      }
+    },
+    {
+      "id": "func:src/views/SolveDockViewProvider.ts:bindCardButtons",
+      "type": "function",
+      "name": "bindCardButtons",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "src/views/SolveDockViewProvider.ts",
+        "lineno": 887
+      }
+    },
+    {
+      "id": "func:src/views/SolveDockViewProvider.ts:renderSearchResults",
+      "type": "function",
+      "name": "renderSearchResults",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "src/views/SolveDockViewProvider.ts",
+        "lineno": 910
+      }
+    },
+    {
+      "id": "func:src/views/SolveDockViewProvider.ts:renderSavedSolutions",
+      "type": "function",
+      "name": "renderSavedSolutions",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "src/views/SolveDockViewProvider.ts",
+        "lineno": 927
+      }
+    },
+    {
+      "id": "func:src/views/SolveDockViewProvider.ts:getNonce",
+      "type": "function",
+      "name": "getNonce",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "src/views/SolveDockViewProvider.ts",
+        "lineno": 966
+      }
+    },
+    {
+      "id": "file:test/fixtures/sampleSolutions.ts",
+      "type": "file",
+      "name": "test/fixtures/sampleSolutions.ts",
+      "source_system": "javascript"
+    },
+    {
+      "id": "func:test/fixtures/sampleSolutions.ts:<module>",
+      "type": "function",
+      "name": "<module>",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "test/fixtures/sampleSolutions.ts",
+        "lineno": 1
+      }
+    },
+    {
+      "id": "file:test/runTest.js",
+      "type": "file",
+      "name": "test/runTest.js",
+      "source_system": "javascript"
+    },
+    {
+      "id": "func:test/runTest.js:main",
+      "type": "function",
+      "name": "main",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "test/runTest.js",
+        "lineno": 4
+      }
+    },
+    {
+      "id": "file:test/suite/extension.test.js",
+      "type": "file",
+      "name": "test/suite/extension.test.js",
+      "source_system": "javascript"
+    },
+    {
+      "id": "func:test/suite/extension.test.js:runIntegrationTests",
+      "type": "function",
+      "name": "runIntegrationTests",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "test/suite/extension.test.js",
+        "lineno": 4
+      }
+    },
+    {
+      "id": "file:test/suite/index.js",
+      "type": "file",
+      "name": "test/suite/index.js",
+      "source_system": "javascript"
+    },
+    {
+      "id": "func:test/suite/index.js:run",
+      "type": "function",
+      "name": "run",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "test/suite/index.js",
+        "lineno": 1
+      }
+    },
+    {
+      "id": "file:test/unit/commands/createSolution.test.ts",
+      "type": "file",
+      "name": "test/unit/commands/createSolution.test.ts",
+      "source_system": "javascript"
+    },
+    {
+      "id": "func:test/unit/commands/createSolution.test.ts:<module>",
+      "type": "function",
+      "name": "<module>",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "test/unit/commands/createSolution.test.ts",
+        "lineno": 1
+      }
+    },
+    {
+      "id": "file:test/unit/commands/searchKnowledge.test.ts",
+      "type": "file",
+      "name": "test/unit/commands/searchKnowledge.test.ts",
+      "source_system": "javascript"
+    },
+    {
+      "id": "func:test/unit/commands/searchKnowledge.test.ts:<module>",
+      "type": "function",
+      "name": "<module>",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "test/unit/commands/searchKnowledge.test.ts",
+        "lineno": 1
+      }
+    },
+    {
+      "id": "file:test/unit/extension.test.js",
+      "type": "file",
+      "name": "test/unit/extension.test.js",
+      "source_system": "javascript"
+    },
+    {
+      "id": "func:test/unit/extension.test.js:<module>",
+      "type": "function",
+      "name": "<module>",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "test/unit/extension.test.js",
+        "lineno": 1
+      }
+    },
+    {
+      "id": "file:test/unit/extension.test.ts",
+      "type": "file",
+      "name": "test/unit/extension.test.ts",
+      "source_system": "javascript"
+    },
+    {
+      "id": "func:test/unit/extension.test.ts:<module>",
+      "type": "function",
+      "name": "<module>",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "test/unit/extension.test.ts",
+        "lineno": 1
+      }
+    },
+    {
+      "id": "file:test/unit/integration/FunctionalMatrix.test.ts",
+      "type": "file",
+      "name": "test/unit/integration/FunctionalMatrix.test.ts",
+      "source_system": "javascript"
+    },
+    {
+      "id": "func:test/unit/integration/FunctionalMatrix.test.ts:<module>",
+      "type": "function",
+      "name": "<module>",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "test/unit/integration/FunctionalMatrix.test.ts",
+        "lineno": 1
+      }
+    },
+    {
+      "id": "file:test/unit/knowledge/SolutionStore.test.ts",
+      "type": "file",
+      "name": "test/unit/knowledge/SolutionStore.test.ts",
+      "source_system": "javascript"
+    },
+    {
+      "id": "func:test/unit/knowledge/SolutionStore.test.ts:<module>",
+      "type": "function",
+      "name": "<module>",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "test/unit/knowledge/SolutionStore.test.ts",
+        "lineno": 1
+      }
+    },
+    {
+      "id": "file:test/unit/knowledge/SolutionValidator.test.ts",
+      "type": "file",
+      "name": "test/unit/knowledge/SolutionValidator.test.ts",
+      "source_system": "javascript"
+    },
+    {
+      "id": "func:test/unit/knowledge/SolutionValidator.test.ts:<module>",
+      "type": "function",
+      "name": "<module>",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "test/unit/knowledge/SolutionValidator.test.ts",
+        "lineno": 1
+      }
+    },
+    {
+      "id": "file:test/unit/knowledge/WorkspaceManager.test.ts",
+      "type": "file",
+      "name": "test/unit/knowledge/WorkspaceManager.test.ts",
+      "source_system": "javascript"
+    },
+    {
+      "id": "func:test/unit/knowledge/WorkspaceManager.test.ts:<module>",
+      "type": "function",
+      "name": "<module>",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "test/unit/knowledge/WorkspaceManager.test.ts",
+        "lineno": 1
+      }
+    },
+    {
+      "id": "file:test/unit/search/SearchService.test.ts",
+      "type": "file",
+      "name": "test/unit/search/SearchService.test.ts",
+      "source_system": "javascript"
+    },
+    {
+      "id": "func:test/unit/search/SearchService.test.ts:<module>",
+      "type": "function",
+      "name": "<module>",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "test/unit/search/SearchService.test.ts",
+        "lineno": 1
+      }
+    },
+    {
+      "id": "file:test/unit/security/SecurityInvariants.test.ts",
+      "type": "file",
+      "name": "test/unit/security/SecurityInvariants.test.ts",
+      "source_system": "javascript"
+    },
+    {
+      "id": "func:test/unit/security/SecurityInvariants.test.ts:<module>",
+      "type": "function",
+      "name": "<module>",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "test/unit/security/SecurityInvariants.test.ts",
+        "lineno": 1
+      }
+    },
+    {
+      "id": "file:test/unit/views/SolveDockViewProvider.test.ts",
+      "type": "file",
+      "name": "test/unit/views/SolveDockViewProvider.test.ts",
+      "source_system": "javascript"
+    },
+    {
+      "id": "func:test/unit/views/SolveDockViewProvider.test.ts:<module>",
+      "type": "function",
+      "name": "<module>",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "test/unit/views/SolveDockViewProvider.test.ts",
+        "lineno": 1
+      }
+    },
+    {
+      "id": "file:test/__mocks__/vscode.ts",
+      "type": "file",
+      "name": "test/__mocks__/vscode.ts",
+      "source_system": "javascript"
+    },
+    {
+      "id": "func:test/__mocks__/vscode.ts:constructor",
+      "type": "function",
+      "name": "constructor",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "test/__mocks__/vscode.ts",
+        "lineno": 41
+      }
+    },
+    {
+      "id": "file:vitest.config.js",
+      "type": "file",
+      "name": "vitest.config.js",
+      "source_system": "javascript"
+    },
+    {
+      "id": "func:vitest.config.js:<module>",
+      "type": "function",
+      "name": "<module>",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "vitest.config.js",
+        "lineno": 1
+      }
+    },
+    {
+      "id": "file:vitest.config.ts",
+      "type": "file",
+      "name": "vitest.config.ts",
+      "source_system": "javascript"
+    },
+    {
+      "id": "func:vitest.config.ts:<module>",
+      "type": "function",
+      "name": "<module>",
+      "source_system": "javascript",
+      "metadata": {
+        "file": "vitest.config.ts",
+        "lineno": 1
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "func:eslint.config.mjs:<module>",
+      "target": "file:eslint.config.mjs",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in eslint.config.mjs:1"
+    },
+    {
+      "source": "func:out/commands/createSolution.js:ownKeys",
+      "target": "file:out/commands/createSolution.js",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in out/commands/createSolution.js:19"
+    },
+    {
+      "source": "func:out/commands/createSolution.js:generateSolutionTemplate",
+      "target": "file:out/commands/createSolution.js",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in out/commands/createSolution.js:45"
+    },
+    {
+      "source": "func:out/commands/createSolution.js:getTargetStores",
+      "target": "file:out/commands/createSolution.js",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in out/commands/createSolution.js:76"
+    },
+    {
+      "source": "func:out/commands/createSolution.js:registerCreateSolutionCommand",
+      "target": "file:out/commands/createSolution.js",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in out/commands/createSolution.js:82"
+    },
+    {
+      "source": "func:out/commands/searchKnowledge.js:ownKeys",
+      "target": "file:out/commands/searchKnowledge.js",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in out/commands/searchKnowledge.js:19"
+    },
+    {
+      "source": "func:out/commands/searchKnowledge.js:registerSearchKnowledgeCommand",
+      "target": "file:out/commands/searchKnowledge.js",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in out/commands/searchKnowledge.js:38"
+    },
+    {
+      "source": "func:out/extension.js:ownKeys",
+      "target": "file:out/extension.js",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in out/extension.js:19"
+    },
+    {
+      "source": "func:out/extension.js:activate",
+      "target": "file:out/extension.js",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in out/extension.js:48"
+    },
+    {
+      "source": "func:out/extension.js:deactivate",
+      "target": "file:out/extension.js",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in out/extension.js:104"
+    },
+    {
+      "source": "func:out/knowledge/SolutionStore.js:ownKeys",
+      "target": "file:out/knowledge/SolutionStore.js",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in out/knowledge/SolutionStore.js:19"
+    },
+    {
+      "source": "func:out/knowledge/SolutionStore.js:constructor",
+      "target": "file:out/knowledge/SolutionStore.js",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in out/knowledge/SolutionStore.js:49"
+    },
+    {
+      "source": "func:out/knowledge/SolutionStore.js:getSolutionsDir",
+      "target": "file:out/knowledge/SolutionStore.js",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in out/knowledge/SolutionStore.js:62"
+    },
+    {
+      "source": "func:out/knowledge/SolutionStore.js:ensureDirectory",
+      "target": "file:out/knowledge/SolutionStore.js",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in out/knowledge/SolutionStore.js:71"
+    },
+    {
+      "source": "func:out/knowledge/SolutionStore.js:sanitizeFilename",
+      "target": "file:out/knowledge/SolutionStore.js",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in out/knowledge/SolutionStore.js:82"
+    },
+    {
+      "source": "func:out/knowledge/SolutionStore.js:assertPathInSolutionsDir",
+      "target": "file:out/knowledge/SolutionStore.js",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in out/knowledge/SolutionStore.js:94"
+    },
+    {
+      "source": "func:out/knowledge/SolutionStore.js:serializeSolution",
+      "target": "file:out/knowledge/SolutionStore.js",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in out/knowledge/SolutionStore.js:107"
+    },
+    {
+      "source": "func:out/knowledge/SolutionStore.js:parseMarkdown",
+      "target": "file:out/knowledge/SolutionStore.js",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in out/knowledge/SolutionStore.js:136"
+    },
+    {
+      "source": "func:out/knowledge/SolutionStore.js:extractSections",
+      "target": "file:out/knowledge/SolutionStore.js",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in out/knowledge/SolutionStore.js:244"
+    },
+    {
+      "source": "func:out/knowledge/SolutionStore.js:loadAllSolutions",
+      "target": "file:out/knowledge/SolutionStore.js",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in out/knowledge/SolutionStore.js:287"
+    },
+    {
+      "source": "func:out/knowledge/SolutionStore.js:saveSolution",
+      "target": "file:out/knowledge/SolutionStore.js",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in out/knowledge/SolutionStore.js:345"
+    },
+    {
+      "source": "func:out/knowledge/SolutionStore.js:updateSolution",
+      "target": "file:out/knowledge/SolutionStore.js",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in out/knowledge/SolutionStore.js:365"
+    },
+    {
+      "source": "func:out/knowledge/SolutionValidator.js:normalize",
+      "target": "file:out/knowledge/SolutionValidator.js",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in out/knowledge/SolutionValidator.js:81"
+    },
+    {
+      "source": "func:out/knowledge/WorkspaceManager.js:ownKeys",
+      "target": "file:out/knowledge/WorkspaceManager.js",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in out/knowledge/WorkspaceManager.js:19"
+    },
+    {
+      "source": "func:out/knowledge/WorkspaceManager.js:constructor",
+      "target": "file:out/knowledge/WorkspaceManager.js",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in out/knowledge/WorkspaceManager.js:48"
+    },
+    {
+      "source": "func:out/knowledge/WorkspaceManager.js:onDidUpdate",
+      "target": "file:out/knowledge/WorkspaceManager.js",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in out/knowledge/WorkspaceManager.js:51"
+    },
+    {
+      "source": "func:out/knowledge/WorkspaceManager.js:initialize",
+      "target": "file:out/knowledge/WorkspaceManager.js",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in out/knowledge/WorkspaceManager.js:57"
+    },
+    {
+      "source": "func:out/knowledge/WorkspaceManager.js:getStores",
+      "target": "file:out/knowledge/WorkspaceManager.js",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in out/knowledge/WorkspaceManager.js:86"
+    },
+    {
+      "source": "func:out/knowledge/WorkspaceManager.js:getDefaultStore",
+      "target": "file:out/knowledge/WorkspaceManager.js",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in out/knowledge/WorkspaceManager.js:92"
+    },
+    {
+      "source": "func:out/knowledge/WorkspaceManager.js:getStoreForPath",
+      "target": "file:out/knowledge/WorkspaceManager.js",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in out/knowledge/WorkspaceManager.js:99"
+    },
+    {
+      "source": "func:out/knowledge/WorkspaceManager.js:reloadAll",
+      "target": "file:out/knowledge/WorkspaceManager.js",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in out/knowledge/WorkspaceManager.js:110"
+    },
+    {
+      "source": "func:out/knowledge/WorkspaceManager.js:handleFileChange",
+      "target": "file:out/knowledge/WorkspaceManager.js",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in out/knowledge/WorkspaceManager.js:127"
+    },
+    {
+      "source": "func:out/knowledge/WorkspaceManager.js:notifyUpdate",
+      "target": "file:out/knowledge/WorkspaceManager.js",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in out/knowledge/WorkspaceManager.js:140"
+    },
+    {
+      "source": "func:out/knowledge/WorkspaceManager.js:getAllCachedSolutions",
+      "target": "file:out/knowledge/WorkspaceManager.js",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in out/knowledge/WorkspaceManager.js:146"
+    },
+    {
+      "source": "func:out/knowledge/WorkspaceManager.js:handleFoldersChanged",
+      "target": "file:out/knowledge/WorkspaceManager.js",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in out/knowledge/WorkspaceManager.js:152"
+    },
+    {
+      "source": "func:out/knowledge/WorkspaceManager.js:disposeWatchers",
+      "target": "file:out/knowledge/WorkspaceManager.js",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in out/knowledge/WorkspaceManager.js:185"
+    },
+    {
+      "source": "func:out/knowledge/WorkspaceManager.js:dispose",
+      "target": "file:out/knowledge/WorkspaceManager.js",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in out/knowledge/WorkspaceManager.js:190"
+    },
+    {
+      "source": "func:out/models/Solution.js:<module>",
+      "target": "file:out/models/Solution.js",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in out/models/Solution.js:1"
+    },
+    {
+      "source": "func:out/search/SearchService.js:constructor",
+      "target": "file:out/search/SearchService.js",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in out/search/SearchService.js:11"
+    },
+    {
+      "source": "func:out/search/SearchService.js:createMiniSearchInstance",
+      "target": "file:out/search/SearchService.js",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in out/search/SearchService.js:14"
+    },
+    {
+      "source": "func:out/search/SearchService.js:indexSolutions",
+      "target": "file:out/search/SearchService.js",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in out/search/SearchService.js:45"
+    },
+    {
+      "source": "func:out/search/SearchService.js:getAllSolutions",
+      "target": "file:out/search/SearchService.js",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in out/search/SearchService.js:58"
+    },
+    {
+      "source": "func:out/search/SearchService.js:updateSolution",
+      "target": "file:out/search/SearchService.js",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in out/search/SearchService.js:64"
+    },
+    {
+      "source": "func:out/search/SearchService.js:removeSolution",
+      "target": "file:out/search/SearchService.js",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in out/search/SearchService.js:74"
+    },
+    {
+      "source": "func:out/search/SearchService.js:search",
+      "target": "file:out/search/SearchService.js",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in out/search/SearchService.js:84"
+    },
+    {
+      "source": "func:out/views/SolveDockViewProvider.js:ownKeys",
+      "target": "file:out/views/SolveDockViewProvider.js",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in out/views/SolveDockViewProvider.js:19"
+    },
+    {
+      "source": "func:out/views/SolveDockViewProvider.js:constructor",
+      "target": "file:out/views/SolveDockViewProvider.js",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in out/views/SolveDockViewProvider.js:50"
+    },
+    {
+      "source": "func:out/views/SolveDockViewProvider.js:resolveWebviewView",
+      "target": "file:out/views/SolveDockViewProvider.js",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in out/views/SolveDockViewProvider.js:61"
+    },
+    {
+      "source": "func:out/views/SolveDockViewProvider.js:validateIncomingMessage",
+      "target": "file:out/views/SolveDockViewProvider.js",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in out/views/SolveDockViewProvider.js:117"
+    },
+    {
+      "source": "func:out/views/SolveDockViewProvider.js:handleOpenSolution",
+      "target": "file:out/views/SolveDockViewProvider.js",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in out/views/SolveDockViewProvider.js:160"
+    },
+    {
+      "source": "func:out/views/SolveDockViewProvider.js:openSolutionFile",
+      "target": "file:out/views/SolveDockViewProvider.js",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in out/views/SolveDockViewProvider.js:168"
+    },
+    {
+      "source": "func:out/views/SolveDockViewProvider.js:handleSearchQuery",
+      "target": "file:out/views/SolveDockViewProvider.js",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in out/views/SolveDockViewProvider.js:182"
+    },
+    {
+      "source": "func:out/views/SolveDockViewProvider.js:addRecentSearch",
+      "target": "file:out/views/SolveDockViewProvider.js",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in out/views/SolveDockViewProvider.js:217"
+    },
+    {
+      "source": "func:out/views/SolveDockViewProvider.js:toggleFavorite",
+      "target": "file:out/views/SolveDockViewProvider.js",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in out/views/SolveDockViewProvider.js:224"
+    },
+    {
+      "source": "func:out/views/SolveDockViewProvider.js:setSolutions",
+      "target": "file:out/views/SolveDockViewProvider.js",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in out/views/SolveDockViewProvider.js:236"
+    },
+    {
+      "source": "func:out/views/SolveDockViewProvider.js:refreshView",
+      "target": "file:out/views/SolveDockViewProvider.js",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in out/views/SolveDockViewProvider.js:240"
+    },
+    {
+      "source": "func:out/views/SolveDockViewProvider.js:sendRecentSearchesToView",
+      "target": "file:out/views/SolveDockViewProvider.js",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in out/views/SolveDockViewProvider.js:244"
+    },
+    {
+      "source": "func:out/views/SolveDockViewProvider.js:sendSavedSolutionsToView",
+      "target": "file:out/views/SolveDockViewProvider.js",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in out/views/SolveDockViewProvider.js:252"
+    },
+    {
+      "source": "func:out/views/SolveDockViewProvider.js:getHtmlForWebview",
+      "target": "file:out/views/SolveDockViewProvider.js",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in out/views/SolveDockViewProvider.js:288"
+    },
+    {
+      "source": "func:out/views/SolveDockViewProvider.js:dispatchFilterChange",
+      "target": "file:out/views/SolveDockViewProvider.js",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in out/views/SolveDockViewProvider.js:755"
+    },
+    {
+      "source": "func:out/views/SolveDockViewProvider.js:escapeHtml",
+      "target": "file:out/views/SolveDockViewProvider.js",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in out/views/SolveDockViewProvider.js:777"
+    },
+    {
+      "source": "func:out/views/SolveDockViewProvider.js:renderRecentSearches",
+      "target": "file:out/views/SolveDockViewProvider.js",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in out/views/SolveDockViewProvider.js:787"
+    },
+    {
+      "source": "func:out/views/SolveDockViewProvider.js:renderCards",
+      "target": "file:out/views/SolveDockViewProvider.js",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in out/views/SolveDockViewProvider.js:812"
+    },
+    {
+      "source": "func:out/views/SolveDockViewProvider.js:bindCardButtons",
+      "target": "file:out/views/SolveDockViewProvider.js",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in out/views/SolveDockViewProvider.js:865"
+    },
+    {
+      "source": "func:out/views/SolveDockViewProvider.js:renderSearchResults",
+      "target": "file:out/views/SolveDockViewProvider.js",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in out/views/SolveDockViewProvider.js:888"
+    },
+    {
+      "source": "func:out/views/SolveDockViewProvider.js:renderSavedSolutions",
+      "target": "file:out/views/SolveDockViewProvider.js",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in out/views/SolveDockViewProvider.js:905"
+    },
+    {
+      "source": "func:out/views/SolveDockViewProvider.js:getNonce",
+      "target": "file:out/views/SolveDockViewProvider.js",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in out/views/SolveDockViewProvider.js:944"
+    },
+    {
+      "source": "func:src/commands/createSolution.ts:generateSolutionTemplate",
+      "target": "file:src/commands/createSolution.ts",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in src/commands/createSolution.ts:13"
+    },
+    {
+      "source": "func:src/commands/createSolution.ts:getTargetStores",
+      "target": "file:src/commands/createSolution.ts",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in src/commands/createSolution.ts:45"
+    },
+    {
+      "source": "func:src/commands/createSolution.ts:registerCreateSolutionCommand",
+      "target": "file:src/commands/createSolution.ts",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in src/commands/createSolution.ts:52"
+    },
+    {
+      "source": "func:src/commands/searchKnowledge.ts:registerSearchKnowledgeCommand",
+      "target": "file:src/commands/searchKnowledge.ts",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in src/commands/searchKnowledge.ts:4"
+    },
+    {
+      "source": "func:src/extension.ts:activate",
+      "target": "file:src/extension.ts",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in src/extension.ts:13"
+    },
+    {
+      "source": "func:src/extension.ts:deactivate",
+      "target": "file:src/extension.ts",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in src/extension.ts:99"
+    },
+    {
+      "source": "func:src/knowledge/SolutionStore.ts:<module>",
+      "target": "file:src/knowledge/SolutionStore.ts",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in src/knowledge/SolutionStore.ts:1"
+    },
+    {
+      "source": "func:src/knowledge/SolutionValidator.ts:normalize",
+      "target": "file:src/knowledge/SolutionValidator.ts",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in src/knowledge/SolutionValidator.ts:103"
+    },
+    {
+      "source": "func:src/knowledge/WorkspaceManager.ts:constructor",
+      "target": "file:src/knowledge/WorkspaceManager.ts",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in src/knowledge/WorkspaceManager.ts:20"
+    },
+    {
+      "source": "func:src/models/Solution.ts:<module>",
+      "target": "file:src/models/Solution.ts",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in src/models/Solution.ts:1"
+    },
+    {
+      "source": "func:src/search/SearchService.ts:constructor",
+      "target": "file:src/search/SearchService.ts",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in src/search/SearchService.ts:19"
+    },
+    {
+      "source": "func:src/views/SolveDockViewProvider.ts:dispatchFilterChange",
+      "target": "file:src/views/SolveDockViewProvider.ts",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in src/views/SolveDockViewProvider.ts:777"
+    },
+    {
+      "source": "func:src/views/SolveDockViewProvider.ts:escapeHtml",
+      "target": "file:src/views/SolveDockViewProvider.ts",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in src/views/SolveDockViewProvider.ts:799"
+    },
+    {
+      "source": "func:src/views/SolveDockViewProvider.ts:renderRecentSearches",
+      "target": "file:src/views/SolveDockViewProvider.ts",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in src/views/SolveDockViewProvider.ts:809"
+    },
+    {
+      "source": "func:src/views/SolveDockViewProvider.ts:renderCards",
+      "target": "file:src/views/SolveDockViewProvider.ts",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in src/views/SolveDockViewProvider.ts:834"
+    },
+    {
+      "source": "func:src/views/SolveDockViewProvider.ts:bindCardButtons",
+      "target": "file:src/views/SolveDockViewProvider.ts",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in src/views/SolveDockViewProvider.ts:887"
+    },
+    {
+      "source": "func:src/views/SolveDockViewProvider.ts:renderSearchResults",
+      "target": "file:src/views/SolveDockViewProvider.ts",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in src/views/SolveDockViewProvider.ts:910"
+    },
+    {
+      "source": "func:src/views/SolveDockViewProvider.ts:renderSavedSolutions",
+      "target": "file:src/views/SolveDockViewProvider.ts",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in src/views/SolveDockViewProvider.ts:927"
+    },
+    {
+      "source": "func:src/views/SolveDockViewProvider.ts:getNonce",
+      "target": "file:src/views/SolveDockViewProvider.ts",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in src/views/SolveDockViewProvider.ts:966"
+    },
+    {
+      "source": "func:test/fixtures/sampleSolutions.ts:<module>",
+      "target": "file:test/fixtures/sampleSolutions.ts",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in test/fixtures/sampleSolutions.ts:1"
+    },
+    {
+      "source": "func:test/runTest.js:main",
+      "target": "file:test/runTest.js",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in test/runTest.js:4"
+    },
+    {
+      "source": "func:test/suite/extension.test.js:runIntegrationTests",
+      "target": "file:test/suite/extension.test.js",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in test/suite/extension.test.js:4"
+    },
+    {
+      "source": "func:test/suite/index.js:run",
+      "target": "file:test/suite/index.js",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in test/suite/index.js:1"
+    },
+    {
+      "source": "func:test/unit/commands/createSolution.test.ts:<module>",
+      "target": "file:test/unit/commands/createSolution.test.ts",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in test/unit/commands/createSolution.test.ts:1"
+    },
+    {
+      "source": "func:test/unit/commands/searchKnowledge.test.ts:<module>",
+      "target": "file:test/unit/commands/searchKnowledge.test.ts",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in test/unit/commands/searchKnowledge.test.ts:1"
+    },
+    {
+      "source": "func:test/unit/extension.test.js:<module>",
+      "target": "file:test/unit/extension.test.js",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in test/unit/extension.test.js:1"
+    },
+    {
+      "source": "func:test/unit/extension.test.ts:<module>",
+      "target": "file:test/unit/extension.test.ts",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in test/unit/extension.test.ts:1"
+    },
+    {
+      "source": "func:test/unit/integration/FunctionalMatrix.test.ts:<module>",
+      "target": "file:test/unit/integration/FunctionalMatrix.test.ts",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in test/unit/integration/FunctionalMatrix.test.ts:1"
+    },
+    {
+      "source": "func:test/unit/knowledge/SolutionStore.test.ts:<module>",
+      "target": "file:test/unit/knowledge/SolutionStore.test.ts",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in test/unit/knowledge/SolutionStore.test.ts:1"
+    },
+    {
+      "source": "func:test/unit/knowledge/SolutionValidator.test.ts:<module>",
+      "target": "file:test/unit/knowledge/SolutionValidator.test.ts",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in test/unit/knowledge/SolutionValidator.test.ts:1"
+    },
+    {
+      "source": "func:test/unit/knowledge/WorkspaceManager.test.ts:<module>",
+      "target": "file:test/unit/knowledge/WorkspaceManager.test.ts",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in test/unit/knowledge/WorkspaceManager.test.ts:1"
+    },
+    {
+      "source": "func:test/unit/search/SearchService.test.ts:<module>",
+      "target": "file:test/unit/search/SearchService.test.ts",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in test/unit/search/SearchService.test.ts:1"
+    },
+    {
+      "source": "func:test/unit/security/SecurityInvariants.test.ts:<module>",
+      "target": "file:test/unit/security/SecurityInvariants.test.ts",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in test/unit/security/SecurityInvariants.test.ts:1"
+    },
+    {
+      "source": "func:test/unit/views/SolveDockViewProvider.test.ts:<module>",
+      "target": "file:test/unit/views/SolveDockViewProvider.test.ts",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in test/unit/views/SolveDockViewProvider.test.ts:1"
+    },
+    {
+      "source": "func:test/__mocks__/vscode.ts:constructor",
+      "target": "file:test/__mocks__/vscode.ts",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in test/__mocks__/vscode.ts:41"
+    },
+    {
+      "source": "func:vitest.config.js:<module>",
+      "target": "file:vitest.config.js",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in vitest.config.js:1"
+    },
+    {
+      "source": "func:vitest.config.ts:<module>",
+      "target": "file:vitest.config.ts",
+      "type": "structural_belongs_to",
+      "confidence": 1,
+      "evidence": "in vitest.config.ts:1"
+    }
+  ],
   "metrics": {
-    "total_nodes": 0,
-    "total_edges": 0,
+    "total_nodes": 149,
+    "total_edges": 104,
     "code_to_db": {
       "total_access_calls": 0,
       "static_sql_count": 0,
