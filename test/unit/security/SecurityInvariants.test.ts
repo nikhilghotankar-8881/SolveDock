@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import * as fs from 'fs';
 import * as path from 'path';
 import { SolutionStore } from '../../../src/knowledge/SolutionStore';
@@ -64,5 +64,46 @@ describe('Phase 7: Security & Boundary Invariants', () => {
     expect(html).toContain("script-src 'nonce-");
     // Must not allow unsafe-eval
     expect(html).not.toContain("'unsafe-eval'");
+  });
+
+  it('SEC-4: assertPathInSolutionsDir throws on path traversal attempts', () => {
+    const store = new SolutionStore('/workspace/root');
+    const validPath = path.join('/workspace/root', '.solvedock', 'solutions', 'my-sol.md');
+    expect(() => store.assertPathInSolutionsDir(validPath)).not.toThrow();
+
+    const escapePath1 = path.join('/workspace/root', '.solvedock', 'solutions', '..', '..', 'secret.txt');
+    expect(() => store.assertPathInSolutionsDir(escapePath1)).toThrow(/outside knowledge directory/);
+
+    const escapePath2 = '/etc/passwd';
+    expect(() => store.assertPathInSolutionsDir(escapePath2)).toThrow(/outside knowledge directory/);
+  });
+
+  it('SEC-5: Webview message handler rejects malicious or unrecognized payloads', () => {
+    const provider = new SolveDockViewProvider(vscode.Uri.file('/mock') as any);
+    let messageListener: ((data: any) => void) | undefined;
+    const mockWebview = {
+      options: {},
+      html: '',
+      cspSource: 'vscode-webview:',
+      postMessage: vi.fn(),
+      onDidReceiveMessage: vi.fn((cb) => {
+        messageListener = cb;
+        return { dispose: vi.fn() };
+      }),
+    };
+
+    provider.resolveWebviewView({ webview: mockWebview } as any, {} as any, {} as any);
+
+    // 1. Completely invalid message object
+    messageListener?.(null);
+    messageListener?.('string-payload');
+    messageListener?.({ command: 'maliciousCommand' });
+
+    // 2. Traversal or invalid solutionId
+    messageListener?.({ command: 'openSolution', solutionId: '../../etc/passwd' });
+    messageListener?.({ command: 'editSolution', solutionId: '' });
+
+    // Should not crash and should not execute unauthorized commands
+    expect(vscode.commands.executeCommand).not.toHaveBeenCalledWith('maliciousCommand');
   });
 });

@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
-import { SolutionStore } from './knowledge/SolutionStore';
-import { SearchService } from './search/SearchService';
-import { Solution } from './models/Solution';
+import { SolutionStore } from './SolutionStore';
+import { SearchService } from '../search/SearchService';
+import { Solution } from '../models/Solution';
 
 export interface WorkspaceKnowledgeState {
   store: SolutionStore;
@@ -133,6 +133,45 @@ export class WorkspaceManager {
     return this._searchService.getAllSolutions();
   }
 
+  /**
+   * Handles workspace folder changes dynamically.
+   */
+  public async handleFoldersChanged(event: vscode.WorkspaceFoldersChangeEvent): Promise<void> {
+    for (const folder of event.removed) {
+      const rootPath = folder.uri.fsPath;
+      const state = this._workspaceMap.get(rootPath);
+      if (state) {
+        state.watcher.dispose();
+        this._workspaceMap.delete(rootPath);
+      }
+    }
+
+    for (const folder of event.added) {
+      const rootPath = folder.uri.fsPath;
+      if (!this._workspaceMap.has(rootPath)) {
+        const store = new SolutionStore(rootPath, folder.name);
+        const pattern = new vscode.RelativePattern(store.getSolutionsDir(), '*.md');
+        const watcher = vscode.workspace.createFileSystemWatcher(pattern);
+        watcher.onDidChange(async (uri) => {
+          await this.handleFileChange(uri, store);
+        });
+        watcher.onDidCreate(async () => {
+          await this.reloadAll();
+        });
+        watcher.onDidDelete((uri) => {
+          const filename = uri.fsPath.split(/[\\/]/).pop()?.replace('.md', '');
+          if (filename) {
+            this._searchService.removeSolution(filename);
+          }
+          this.notifyUpdate();
+        });
+        this._workspaceMap.set(rootPath, { store, watcher });
+      }
+    }
+
+    await this.reloadAll();
+  }
+
   public disposeWatchers(): void {
     for (const state of this._workspaceMap.values()) {
       state.watcher.dispose();
@@ -141,6 +180,7 @@ export class WorkspaceManager {
 
   public dispose(): void {
     this.disposeWatchers();
+    this._workspaceMap.clear();
     for (const d of this._disposables) {
       d.dispose();
     }

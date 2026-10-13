@@ -58,6 +58,10 @@
         "title": "SolveDock: Create Solution"
       },
       {
+        "command": "solvedock.createSolutionFromTemplate",
+        "title": "SolveDock: Create Solution from Template"
+      },
+      {
         "command": "solvedock.refreshKnowledge",
         "title": "SolveDock: Refresh Knowledge"
       }

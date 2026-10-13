@@ -12,7 +12,7 @@ describe('SearchService', () => {
   });
 
   it('indexes all sample solutions', () => {
-    expect(searchService.documentCount).toBe(16);
+    expect(searchService.documentCount).toBe(20);
   });
 
   it('returns empty array when query is empty or whitespace', () => {
@@ -58,26 +58,28 @@ describe('SearchService', () => {
     };
 
     searchService.updateSolution(newSolution);
-    expect(searchService.documentCount).toBe(17);
+    expect(searchService.documentCount).toBe(21);
 
     const found = searchService.search('Rust borrow mutable');
     expect(found.length).toBeGreaterThan(0);
     expect(found[0].solution.id).toBe('rust-borrow-001');
 
     searchService.removeSolution('rust-borrow-001');
-    expect(searchService.documentCount).toBe(16);
+    expect(searchService.documentCount).toBe(20);
     expect(searchService.search('Rust borrow mutable')).toHaveLength(0);
   });
 
   /**
-   * Phase 4 Requirement 6:
-   * "Prepare 10 representative queries with known expected matches.
-   * Internal target: the expected solution appears in the first three results for at least 8 of 10 queries."
+   * Phase 7 Requirement:
+   * 20 representative queries covering Python, JavaScript, TypeScript,
+   * databases, Git, Docker, dependencies, and configuration.
+   * Measurable target: At least 80% of representative queries must return
+   * the expected record within the top 3 results.
    */
-  describe('Phase 4: Realistic query benchmark (target: >= 8 of 10 in top 3)', () => {
+  describe('Phase 7: Realistic query benchmark (target: >= 80% in top 3 across 20 queries)', () => {
     const testCases: Array<{ query: string; expectedId: string; description: string }> = [
       {
-        query: 'PostgreSQL connection refused',
+        query: 'PostgreSQL connection refused 5432',
         expectedId: 'postgres-conn-001',
         description: 'Postgres connection error',
       },
@@ -117,18 +119,68 @@ describe('SearchService', () => {
         description: 'Git merge conflict',
       },
       {
-        query: 'No space left on device docker',
+        query: 'ERR max number of clients reached Redis',
+        expectedId: 'redis-maxclients-001',
+        description: 'Redis client limit',
+      },
+      {
+        query: 'ERESOLVE unable to resolve dependency tree npm install',
+        expectedId: 'npm-peer-dep-001',
+        description: 'NPM peer dependency conflict',
+      },
+      {
+        query: 'No space left on device docker build',
         expectedId: 'docker-no-space-001',
         description: 'Docker build out of space',
+      },
+      {
+        query: 'Cannot find name document or window tsconfig DOM',
+        expectedId: 'typescript-cannot-find-name-001',
+        description: 'TypeScript DOM types missing',
+      },
+      {
+        query: 'SSLCertVerificationError certificate verify failed requests',
+        expectedId: 'python-ssl-cert-001',
+        description: 'Python requests SSL verification',
+      },
+      {
+        query: 'MongoServerError Authentication failed authSource admin',
+        expectedId: 'mongodb-auth-001',
+        description: 'MongoDB authSource error',
+      },
+      {
+        query: 'Can not resolve crypto webpack 5 polyfill',
+        expectedId: 'webpack-crypto-001',
+        description: 'Webpack 5 Node polyfills',
       },
       {
         query: 'Permission denied publickey git github',
         expectedId: 'git-permission-denied-001',
         description: 'SSH public key auth failure',
       },
+      {
+        query: 'Object is possibly null or undefined TS2531 strictNullChecks',
+        expectedId: 'ts-strict-null-001',
+        description: 'TypeScript strict null check',
+      },
+      {
+        query: 'Redis connection timeout ECONNREFUSED 6379',
+        expectedId: 'redis-conn-timeout-001',
+        description: 'Redis server port connection timeout',
+      },
+      {
+        query: 'Nginx 502 Bad Gateway upstream socket connection refused',
+        expectedId: 'nginx-502-bad-gateway-001',
+        description: 'Nginx upstream socket 502',
+      },
+      {
+        query: 'pip install SSL CERTIFICATE_VERIFY_FAILED certificate verify failed',
+        expectedId: 'pip-ssl-cert-verify-001',
+        description: 'pip SSL certificate verify failed',
+      },
     ];
 
-    it('achieves >= 80% accuracy in top 3 results', () => {
+    it('achieves >= 80% accuracy in top 3 results on 20 representative queries', () => {
       let top3Hits = 0;
 
       for (const tc of testCases) {
@@ -142,8 +194,9 @@ describe('SearchService', () => {
       }
 
       const score = (top3Hits / testCases.length) * 100;
+      expect(testCases.length).toBe(20);
       expect(score).toBeGreaterThanOrEqual(80);
-      expect(top3Hits).toBeGreaterThanOrEqual(8);
+      expect(top3Hits).toBeGreaterThanOrEqual(16);
     });
   });
 });

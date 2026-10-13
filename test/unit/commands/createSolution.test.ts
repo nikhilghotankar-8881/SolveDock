@@ -13,6 +13,9 @@ describe('createSolution Command', () => {
     vi.clearAllMocks();
     mockStore = {
       saveSolution: vi.fn().mockResolvedValue('/mock/workspace/.solvedock/solutions/test-sol.md'),
+      sanitizeFilename: vi.fn((id: string) => `${id}.md`),
+      ensureDirectory: vi.fn().mockResolvedValue(undefined),
+      solutionsDir: '/mock/workspace/.solvedock/solutions',
     };
     mockSearch = {
       updateSolution: vi.fn(),
@@ -20,18 +23,22 @@ describe('createSolution Command', () => {
     mockContext = { subscriptions: [] };
   });
 
-  it('registers solvedock.createSolution command', () => {
+  it('registers solvedock.createSolution and template commands', () => {
     registerCreateSolutionCommand(mockContext, mockStore, mockSearch);
     expect(vscode.commands.registerCommand).toHaveBeenCalledWith(
       'solvedock.createSolution',
       expect.any(Function)
     );
+    expect(vscode.commands.registerCommand).toHaveBeenCalledWith(
+      'solvedock.createSolutionFromTemplate',
+      expect.any(Function)
+    );
   });
 
   it('runs complete create workflow when user provides valid input', async () => {
-    let handler: Function | undefined;
-    vi.mocked(vscode.commands.registerCommand).mockImplementation((_name, fn) => {
-      handler = fn;
+    const handlers: Record<string, Function> = {};
+    vi.mocked(vscode.commands.registerCommand).mockImplementation((name, fn) => {
+      handlers[name] = fn;
       return { dispose: vi.fn() };
     });
 
@@ -56,7 +63,7 @@ describe('createSolution Command', () => {
     vi.mocked(vscode.window.showInformationMessage).mockResolvedValueOnce('Open File' as any);
     vi.mocked(vscode.workspace.openTextDocument).mockResolvedValueOnce({} as any);
 
-    await handler!();
+    await handlers['solvedock.createSolution']();
 
     expect(mockStore.saveSolution).toHaveBeenCalled();
     expect(mockSearch.updateSolution).toHaveBeenCalled();
@@ -71,9 +78,9 @@ describe('createSolution Command', () => {
   });
 
   it('aborts gracefully if user cancels any step', async () => {
-    let handler: Function | undefined;
-    vi.mocked(vscode.commands.registerCommand).mockImplementation((_name, fn) => {
-      handler = fn;
+    const handlers: Record<string, Function> = {};
+    vi.mocked(vscode.commands.registerCommand).mockImplementation((name, fn) => {
+      handlers[name] = fn;
       return { dispose: vi.fn() };
     });
 
@@ -82,7 +89,7 @@ describe('createSolution Command', () => {
     // User cancels title input
     vi.mocked(vscode.window.showInputBox).mockResolvedValueOnce(undefined as any);
 
-    await handler!();
+    await handlers['solvedock.createSolution']();
 
     expect(mockStore.saveSolution).not.toHaveBeenCalled();
     expect(mockSearch.updateSolution).not.toHaveBeenCalled();
