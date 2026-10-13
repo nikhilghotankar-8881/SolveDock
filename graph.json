@@ -1,0 +1,15 @@
+{
+  "nodes": [],
+  "edges": [],
+  "metrics": {
+    "total_nodes": 0,
+    "total_edges": 0,
+    "code_to_db": {
+      "total_access_calls": 0,
+      "static_sql_count": 0,
+      "orm_call_count": 0,
+      "dynamic_unresolved_count": 0,
+      "dynamic_unresolved_ratio": 0
+    }
+  }
+}
