@@ -32,7 +32,7 @@ Update this table as you go. Do not start a phase until the one above it is mark
 | 3 | Knowledge Engine | Structured solution storage and parsing | [x] | `feat: add local knowledge storage` |
 | 4 | Search Engine | Working local knowledge search | [x] | `feat: implement local solution search` |
 | 5 | Solution Management | Create, view, edit, and organize solutions | [x] | `feat: add solution creation and editing` |
-| 6 | Product Polish | Better usability and reliability | [ ] | `feat: improve SolveDock usability` |
+| 6 | Product Polish | Better usability and reliability | [x] | `feat: improve SolveDock usability` |
 | 7 | Testing and Security | Tested extension with predictable behavior | [ ] | `test: add extension reliability and security checks` |
 | 8 | Version Control and Documentation | Clean repository and release documentation | [ ] | not specified in the plan |
 | 9 | Packaging and Distribution | Installable VSIX package | [ ] | not specified in the plan |
