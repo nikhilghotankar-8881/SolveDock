@@ -1,7 +1,19 @@
 import * as vscode from 'vscode';
+import * as path from 'path';
 import { SearchService } from '../search/SearchService';
 import { SolutionStore } from '../knowledge/SolutionStore';
 import { Solution } from '../models/Solution';
+import { WorkspaceManager } from '../knowledge/WorkspaceManager';
+
+export type WebviewIncomingMessage =
+  | { command: 'addSolution' }
+  | { command: 'searchQuery'; value: string }
+  | { command: 'openSolution'; solutionId: string }
+  | { command: 'editSolution'; solutionId: string }
+  | { command: 'toggleFavorite'; solutionId: string }
+  | { command: 'filterChange'; techFilter?: string; statusFilter?: string }
+  | { command: 'clearSearch' }
+  | { command: 'refreshKnowledge' };
 
 export class SolveDockViewProvider implements vscode.WebviewViewProvider {
   public static readonly viewType = 'solvedock.mainView';
@@ -14,7 +26,7 @@ export class SolveDockViewProvider implements vscode.WebviewViewProvider {
 
   constructor(
     private readonly _extensionUri: vscode.Uri,
-    private readonly _solutionStore?: SolutionStore,
+    private readonly _workspaceManager?: WorkspaceManager,
     private readonly _searchService?: SearchService,
     private readonly _context?: vscode.ExtensionContext
   ) {
@@ -39,63 +51,134 @@ export class SolveDockViewProvider implements vscode.WebviewViewProvider {
 
     webviewView.webview.html = this.getHtmlForWebview(webviewView.webview);
 
-    webviewView.webview.onDidReceiveMessage(
-      async (data: {
-        command: string;
-        value?: string;
-        filePath?: string;
-        solutionId?: string;
-        techFilter?: string;
-        statusFilter?: string;
-      }) => {
-        switch (data.command) {
-          case 'addSolution': {
-            vscode.commands.executeCommand('solvedock.createSolution');
-            break;
-          }
-          case 'searchQuery': {
-            this.handleSearchQuery(data.value || '');
-            break;
-          }
-          case 'openSolution': {
-            if (data.filePath) {
-              await this.openSolutionFile(data.filePath);
-            }
-            break;
-          }
-          case 'editSolution': {
-            if (data.filePath) {
-              await this.openSolutionFile(data.filePath);
-            }
-            break;
-          }
-          case 'toggleFavorite': {
-            if (data.solutionId) {
-              this.toggleFavorite(data.solutionId);
-            }
-            break;
-          }
-          case 'filterChange': {
-            this._filterTechnology = data.techFilter || '';
-            this._filterStatus = data.statusFilter || '';
-            this.sendSavedSolutionsToView();
-            break;
-          }
-          case 'clearSearch': {
-            this.handleSearchQuery('');
-            break;
-          }
-          case 'refreshKnowledge': {
-            vscode.commands.executeCommand('solvedock.refreshKnowledge');
-            break;
-          }
+    webviewView.webview.onDidReceiveMessage(async (raw: unknown) => {
+      const msg = this.validateIncomingMessage(raw);
+      if (!msg) {
+        return;
+      }
+
+      switch (msg.command) {
+        case 'addSolution': {
+          vscode.commands.executeCommand('solvedock.createSolution');
+          break;
+        }
+        case 'searchQuery': {
+          this.handleSearchQuery(msg.value || '');
+          break;
+        }
+        case 'openSolution': {
+          await this.handleOpenSolution(msg.solutionId);
+          break;
+        }
+        case 'editSolution': {
+          await this.handleOpenSolution(msg.solutionId);
+          break;
+        }
+        case 'toggleFavorite': {
+          this.toggleFavorite(msg.solutionId);
+          break;
+        }
+        case 'filterChange': {
+          this._filterTechnology = msg.techFilter || '';
+          this._filterStatus = msg.statusFilter || '';
+          this.sendSavedSolutionsToView();
+          break;
+        }
+        case 'clearSearch': {
+          this.handleSearchQuery('');
+          break;
+        }
+        case 'refreshKnowledge': {
+          vscode.commands.executeCommand('solvedock.refreshKnowledge');
+          break;
         }
       }
-    );
+    });
 
     // Initial populate
     this.sendSavedSolutionsToView();
     this.sendRecentSearchesToView();
+  }
+
+  /**
+   * Validates and sanitizes untrusted input from the Webview.
+   */
+  public validateIncomingMessage(raw: unknown): WebviewIncomingMessage | null {
+    if (!raw || typeof raw !== 'object' || Array.isArray(raw)) {
+      return null;
+    }
+
+    const data = raw as Record<string, unknown>;
+    const command = data.command;
+
+    if (typeof command !== 'string') {
+      return null;
+    }
+
+    switch (command) {
+      case 'addSolution':
+      case 'clearSearch':
+      case 'refreshKnowledge':
+        return { command };
+
+      case 'searchQuery':
+        return {
+          command: 'searchQuery',
+          value: typeof data.value === 'string' ? data.value.slice(0, 300) : '',
+        };
+
+      case 'openSolution':
+      case 'editSolution':
+      case 'toggleFavorite':
+        if (typeof data.solutionId === 'string' && data.solutionId.trim().length > 0) {
+          return {
+            command,
+            solutionId: data.solutionId.trim().slice(0, 150),
+          };
+        }
+        return null;
+
+      case 'filterChange':
+        return {
+          command: 'filterChange',
+          techFilter: typeof data.techFilter === 'string' ? data.techFilter.slice(0, 100) : '',
+          statusFilter: typeof data.statusFilter === 'string' ? data.statusFilter.slice(0, 50) : '',
+        };
+
+      default:
+        return null;
+    }
+  }
+
+  /**
+   * Safely resolves a solution by ID from trusted memory and opens it.
+   * Never trusts arbitrary filesystem paths sent by the client.
+   */
+  public async handleOpenSolution(solutionId: string): Promise<void> {
+    const solution = this._cachedSolutions.find((s) => s.id === solutionId);
+    if (!solution || !solution.sourcePath) {
+      vscode.window.showErrorMessage(`SolveDock: Solution "${solutionId}" not found in active workspace.`);
+      return;
+    }
+
+    await this.openSolutionFile(solution.sourcePath);
+  }
+
+  public async openSolutionFile(filePath: string): Promise<void> {
+    try {
+      // Validate path containment against all active workspace stores
+      const store = this._workspaceManager?.getStoreForPath(filePath);
+      if (store) {
+        store.assertPathInSolutionsDir(filePath);
+      }
+
+      const doc = await vscode.workspace.openTextDocument(filePath);
+      await vscode.window.showTextDocument(doc);
+    } catch (err: any) {
+      vscode.window.showErrorMessage(
+        `SolveDock couldn't open this solution file: ${err.message || String(err)}`
+      );
+    }
   }
 
   private handleSearchQuery(query: string): void {
@@ -126,7 +209,7 @@ export class SolveDockViewProvider implements vscode.WebviewViewProvider {
       rootCause: r.solution.rootCause,
       resolution: r.solution.resolution,
       environment: r.solution.environment,
-      sourcePath: r.solution.sourcePath,
+      workspaceName: r.solution.workspaceName,
       isFavorite: this._favorites.has(r.solution.id),
       score: r.score,
     }));
@@ -160,15 +243,9 @@ export class SolveDockViewProvider implements vscode.WebviewViewProvider {
     this.sendSavedSolutionsToView();
   }
 
-  public async openSolutionFile(filePath: string): Promise<void> {
-    try {
-      const doc = await vscode.workspace.openTextDocument(filePath);
-      await vscode.window.showTextDocument(doc);
-    } catch (err: any) {
-      vscode.window.showErrorMessage(
-        `SolveDock couldn't open this solution file. Check whether the file is accessible: ${err.message || String(err)}`
-      );
-    }
+  public setSolutions(solutions: Solution[]): void {
+    this._cachedSolutions = solutions;
+    this.sendSavedSolutionsToView();
   }
 
   public refreshView(solutions: Solution[]): void {
@@ -214,9 +291,11 @@ export class SolveDockViewProvider implements vscode.WebviewViewProvider {
       rootCause: s.rootCause,
       resolution: s.resolution,
       environment: s.environment,
-      sourcePath: s.sourcePath,
+      workspaceName: s.workspaceName,
       isFavorite: this._favorites.has(s.id),
     }));
+
+    const hasWorkspace = this._workspaceManager && this._workspaceManager.getStores().length > 0;
 
     this._view.webview.postMessage({
       type: 'savedSolutions',
@@ -225,6 +304,7 @@ export class SolveDockViewProvider implements vscode.WebviewViewProvider {
       availableTechs,
       currentTech: this._filterTechnology,
       currentStatus: this._filterStatus,
+      hasWorkspace,
     });
   }
 
@@ -512,6 +592,15 @@ export class SolveDockViewProvider implements vscode.WebviewViewProvider {
       border-radius: 2px;
     }
 
+    .workspace-pill {
+      font-size: 9.5px;
+      padding: 1px 4px;
+      background: var(--vscode-activityBar-background);
+      color: var(--vscode-activityBar-foreground);
+      border: 1px solid var(--vscode-widget-border, rgba(128, 128, 128, 0.2));
+      border-radius: 2px;
+    }
+
     .result-preview {
       margin-top: 4px;
       border-top: 1px solid var(--vscode-widget-border, rgba(128, 128, 128, 0.1));
@@ -667,7 +756,6 @@ export class SolveDockViewProvider implements vscode.WebviewViewProvider {
         vscode.postMessage({ command: 'searchQuery', value: val });
       });
 
-      // Keyboard friendly workflow: Esc clears search query
       searchInput.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
           searchInput.value = '';
@@ -704,7 +792,7 @@ export class SolveDockViewProvider implements vscode.WebviewViewProvider {
       if (msg.type === 'searchResults') {
         renderSearchResults(msg.results, msg.query);
       } else if (msg.type === 'savedSolutions') {
-        renderSavedSolutions(msg.solutions, msg.totalCount, msg.availableTechs, msg.currentTech, msg.currentStatus);
+        renderSavedSolutions(msg.solutions, msg.totalCount, msg.availableTechs, msg.currentTech, msg.currentStatus, msg.hasWorkspace);
       } else if (msg.type === 'recentSearches') {
         renderRecentSearches(msg.searches);
       }
@@ -756,7 +844,9 @@ export class SolveDockViewProvider implements vscode.WebviewViewProvider {
           .map(t => '<span class="tech-pill">' + escapeHtml(t) + '</span>')
           .join('');
 
-        const filename = item.sourcePath ? item.sourcePath.split(/[\\\\/]/).pop() : 'solution.md';
+        const wsPill = item.workspaceName
+          ? '<span class="workspace-pill">' + escapeHtml(item.workspaceName) + '</span>'
+          : '';
 
         html += '<div class="result-card">';
         html += '  <div class="result-header">';
@@ -767,11 +857,10 @@ export class SolveDockViewProvider implements vscode.WebviewViewProvider {
         html += '    </div>';
         html += '  </div>';
 
-        if (techPills) {
-          html += '  <div class="result-tech">' + techPills + '</div>';
+        if (techPills || wsPill) {
+          html += '  <div class="result-tech">' + wsPill + techPills + '</div>';
         }
 
-        // Inline Solution Preview without forcing to open file
         html += '  <div class="result-preview">';
         if (item.problem) {
           html += '    <div class="preview-row"><span class="preview-label">Problem: </span><span class="preview-val">' + escapeHtml(item.problem) + '</span></div>';
@@ -785,12 +874,10 @@ export class SolveDockViewProvider implements vscode.WebviewViewProvider {
         html += '  </div>';
 
         html += '  <div class="result-footer">';
-        html += '    <span class="source-name" title="' + escapeHtml(item.sourcePath || '') + '">' + escapeHtml(filename) + '</span>';
+        html += '    <span class="source-name">' + escapeHtml(item.id) + '.md</span>';
         html += '    <div class="card-actions">';
-        if (item.sourcePath) {
-          html += '      <button class="btn-action btn-open" data-path="' + escapeHtml(item.sourcePath) + '">[Open]</button>';
-          html += '      <button class="btn-action btn-edit" data-path="' + escapeHtml(item.sourcePath) + '">[Edit]</button>';
-        }
+        html += '      <button class="btn-action btn-open" data-id="' + escapeHtml(item.id) + '">[Open]</button>';
+        html += '      <button class="btn-action btn-edit" data-id="' + escapeHtml(item.id) + '">[Edit]</button>';
         html += '    </div>';
         html += '  </div>';
         html += '</div>';
@@ -802,15 +889,15 @@ export class SolveDockViewProvider implements vscode.WebviewViewProvider {
     function bindCardButtons(container) {
       container.querySelectorAll('.btn-open').forEach(btn => {
         btn.addEventListener('click', () => {
-          const path = btn.getAttribute('data-path');
-          if (path) vscode.postMessage({ command: 'openSolution', filePath: path });
+          const id = btn.getAttribute('data-id');
+          if (id) vscode.postMessage({ command: 'openSolution', solutionId: id });
         });
       });
 
       container.querySelectorAll('.btn-edit').forEach(btn => {
         btn.addEventListener('click', () => {
-          const path = btn.getAttribute('data-path');
-          if (path) vscode.postMessage({ command: 'editSolution', filePath: path });
+          const id = btn.getAttribute('data-id');
+          if (id) vscode.postMessage({ command: 'editSolution', solutionId: id });
         });
       });
 
@@ -839,7 +926,7 @@ export class SolveDockViewProvider implements vscode.WebviewViewProvider {
       bindCardButtons(searchResults);
     }
 
-    function renderSavedSolutions(solutions, totalCount, availableTechs, currentTech, currentStatus) {
+    function renderSavedSolutions(solutions, totalCount, availableTechs, currentTech, currentStatus, hasWorkspace) {
       if (!savedSolutions) return;
 
       if (savedCount) {
@@ -857,6 +944,11 @@ export class SolveDockViewProvider implements vscode.WebviewViewProvider {
 
       if (statusSelect && currentStatus) {
         statusSelect.value = currentStatus;
+      }
+
+      if (hasWorkspace === false) {
+        savedSolutions.innerHTML = '<div class="empty-state"><div class="empty-state-title">No workspace folder open</div><p class="empty-state-text">Open a project folder to manage and search your repository solutions.</p></div>';
+        return;
       }
 
       if (!solutions || solutions.length === 0) {

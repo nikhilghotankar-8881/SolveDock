@@ -23,6 +23,7 @@ export const workspace = {
       index: 0,
     },
   ],
+  onDidChangeWorkspaceFolders: vi.fn().mockReturnValue({ dispose: vi.fn() }),
   openTextDocument: vi.fn(),
   createFileSystemWatcher: vi.fn().mockReturnValue({
     onDidChange: vi.fn(),

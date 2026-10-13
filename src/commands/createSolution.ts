@@ -1,16 +1,83 @@
 import * as vscode from 'vscode';
+import * as path from 'path';
+import * as fs from 'fs';
 import { SolutionStore } from '../knowledge/SolutionStore';
 import { SearchService } from '../search/SearchService';
-import { SolutionValidator, SolutionInput } from '../knowledge/SolutionValidator';
+import { SolutionValidator } from '../knowledge/SolutionValidator';
 import { Solution, SolutionStatus } from '../models/Solution';
+import { WorkspaceManager } from '../knowledge/WorkspaceManager';
+
+/**
+ * Generates an initial Markdown template for detailed in-editor authoring.
+ */
+export function generateSolutionTemplate(id: string, title: string = 'New Technical Solution'): string {
+  const today = new Date().toISOString().split('T')[0];
+  return `---
+id: ${id}
+title: ${title}
+technology:
+  - 
+tags:
+  - 
+status: draft
+environment: 
+verifiedAt: 
+---
+
+## Problem
+<!-- Describe the problem or paste the exact error message and symptoms here -->
+
+
+## Root Cause
+<!-- Explain why this error occurs (e.g. missing dependency, port conflict, configuration) -->
+
+
+## Solution
+<!-- Provide step-by-step resolution instructions and code snippets -->
+
+
+## Verification
+<!-- Document how this solution was tested and verified in your environment -->
+`;
+}
+
+function getTargetStores(managerOrStore: WorkspaceManager | SolutionStore): SolutionStore[] {
+  if (managerOrStore && typeof (managerOrStore as any).getStores === 'function') {
+    return (managerOrStore as WorkspaceManager).getStores();
+  }
+  return managerOrStore ? [managerOrStore as SolutionStore] : [];
+}
 
 export function registerCreateSolutionCommand(
   context: vscode.ExtensionContext,
-  solutionStore: SolutionStore,
+  workspaceManager: WorkspaceManager | SolutionStore,
   searchService: SearchService,
   onSolutionCreated?: (solution: Solution) => void
-): vscode.Disposable {
-  return vscode.commands.registerCommand('solvedock.createSolution', async () => {
+): vscode.Disposable[] {
+  // 1. Interactive Step-by-Step Quick Entry
+  const quickEntryCmd = vscode.commands.registerCommand('solvedock.createSolution', async () => {
+    const stores = getTargetStores(workspaceManager);
+    if (stores.length === 0) {
+      vscode.window.showInformationMessage('SolveDock: Open a project folder to create solutions.');
+      return;
+    }
+
+    // Select target workspace folder if multi-root
+    let targetStore = stores[0];
+    if (stores.length > 1) {
+      const picks = stores.map((s) => ({
+        label: s.workspaceName || path.basename(s.workspaceRoot || ''),
+        description: s.workspaceRoot,
+        store: s,
+      }));
+      const selected = await vscode.window.showQuickPick(picks, {
+        title: 'SolveDock: Select Workspace Folder',
+        placeHolder: 'Select where to save this solution',
+      });
+      if (!selected) return;
+      targetStore = selected.store;
+    }
+
     // 1. Prompt for Title
     const title = await vscode.window.showInputBox({
       title: 'SolveDock: Create New Solution (1/7)',
@@ -129,6 +196,7 @@ export function registerCreateSolutionCommand(
       environment: environment ? environment.trim() : undefined,
       status,
       verifiedAt: status === 'verified' ? new Date().toISOString().split('T')[0] : undefined,
+      workspaceName: targetStore.workspaceName,
     };
 
     // Validate using SolutionValidator
@@ -139,7 +207,7 @@ export function registerCreateSolutionCommand(
     }
 
     try {
-      const savedPath = await solutionStore.saveSolution(newSolution);
+      const savedPath = await targetStore.saveSolution(newSolution);
       newSolution.sourcePath = savedPath;
       searchService.updateSolution(newSolution);
 
@@ -161,4 +229,65 @@ export function registerCreateSolutionCommand(
       vscode.window.showErrorMessage(`Failed to save solution: ${err.message || String(err)}`);
     }
   });
+
+  // 2. Comfortable Markdown Template in Editor (Phase 4 requirement)
+  const templateCmd = vscode.commands.registerCommand('solvedock.createSolutionFromTemplate', async () => {
+    const stores = getTargetStores(workspaceManager);
+    if (stores.length === 0) {
+      vscode.window.showInformationMessage('SolveDock: Open a project folder to create solutions.');
+      return;
+    }
+
+    let targetStore = stores[0];
+    if (stores.length > 1) {
+      const picks = stores.map((s) => ({
+        label: s.workspaceName || path.basename(s.workspaceRoot || ''),
+        description: s.workspaceRoot,
+        store: s,
+      }));
+      const selected = await vscode.window.showQuickPick(picks, {
+        title: 'SolveDock: Select Workspace Folder',
+        placeHolder: 'Select where to create the solution template',
+      });
+      if (!selected) return;
+      targetStore = selected.store;
+    }
+
+    const titleInput = await vscode.window.showInputBox({
+      title: 'SolveDock: New Solution Template',
+      prompt: 'Enter solution title or filename slug',
+      placeHolder: 'e.g. Docker Container Memory Limit',
+    });
+    if (!titleInput) return;
+
+    const baseSlug = titleInput
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9_-]/g, '-')
+      .replace(/-+/g, '-')
+      .replace(/^-|-$/g, '')
+      .slice(0, 30);
+    const id = `${baseSlug || 'solution'}-${Date.now().toString().slice(-4)}`;
+    const filename = targetStore.sanitizeFilename(id);
+
+    await targetStore.ensureDirectory();
+    const filePath = path.join(targetStore.getSolutionsDir(), filename);
+
+    if (fs.existsSync(filePath)) {
+      vscode.window.showErrorMessage(`A solution file named "${filename}" already exists.`);
+      return;
+    }
+
+    const templateContent = generateSolutionTemplate(id, titleInput.trim());
+    await fs.promises.writeFile(filePath, templateContent, 'utf-8');
+
+    const doc = await vscode.workspace.openTextDocument(filePath);
+    await vscode.window.showTextDocument(doc);
+
+    vscode.window.showInformationMessage(
+      `SolveDock: Created template in ${filename}. Edit and save to index.`
+    );
+  });
+
+  return [quickEntryCmd, templateCmd];
 }
