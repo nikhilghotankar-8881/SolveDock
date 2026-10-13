@@ -157,20 +157,20 @@ These are inconsistencies in the plan text itself. Resolve them when you reach t
 
 | Requirement | Target | Done |
 |---|---|---|
-| Product identity | SolveDock name and description finalized | [ ] |
-| Extension foundation | TypeScript project builds and activates | [ ] |
-| Interface | Sidebar and commands work | [ ] |
-| Knowledge format | Markdown records parse correctly | [ ] |
-| Search | Relevant solutions are retrieved | [ ] |
-| Source navigation | Users can open original records | [ ] |
-| Solution management | Create and edit workflows work | [ ] |
-| Persistence | Solutions survive editor restarts | [ ] |
-| Git compatibility | Knowledge files can be shared through a repository | [ ] |
-| Testing | Core unit and integration tests pass | [ ] |
-| Error handling | Invalid or inaccessible files are handled gracefully | [ ] |
-| Privacy | MVP works without transmitting knowledge to a remote service | [ ] |
-| Security | File access and UI input are handled safely | [ ] |
-| Documentation | README, CHANGELOG, and LICENSE are ready | [ ] |
-| Packaging | A VSIX can be installed successfully | [ ] |
-| Clean installation | Core workflows work in a separate environment | [ ] |
-| Release preparation | Publisher identity and Marketplace metadata are ready | [ ] |
+| Product identity | SolveDock name and description finalized | [x] |
+| Extension foundation | TypeScript project builds and activates | [x] |
+| Interface | Sidebar and commands work | [x] |
+| Knowledge format | Markdown records parse correctly | [x] |
+| Search | Relevant solutions are retrieved | [x] |
+| Source navigation | Users can open original records | [x] |
+| Solution management | Create and edit workflows work | [x] |
+| Persistence | Solutions survive editor restarts | [x] |
+| Git compatibility | Knowledge files can be shared through a repository | [x] |
+| Testing | Core unit and integration tests pass | [x] |
+| Error handling | Invalid or inaccessible files are handled gracefully | [x] |
+| Privacy | MVP works without transmitting knowledge to a remote service | [x] |
+| Security | File access and UI input are handled safely | [x] |
+| Documentation | README, CHANGELOG, and LICENSE are ready | [x] |
+| Packaging | A VSIX can be installed successfully | [x] |
+| Clean installation | Core workflows work in a separate environment | [x] |
+| Release preparation | Publisher identity and Marketplace metadata are ready | [x] |
