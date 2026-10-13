@@ -9,6 +9,9 @@ export const window = {
   showInformationMessage: vi.fn(),
   showWarningMessage: vi.fn(),
   showErrorMessage: vi.fn(),
+  showInputBox: vi.fn(),
+  showQuickPick: vi.fn(),
+  showTextDocument: vi.fn(),
   registerWebviewViewProvider: vi.fn().mockReturnValue({ dispose: vi.fn() }),
 };
 
@@ -20,6 +23,7 @@ export const workspace = {
       index: 0,
     },
   ],
+  openTextDocument: vi.fn(),
 };
 
 export const Uri = {

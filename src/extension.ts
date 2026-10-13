@@ -1,18 +1,31 @@
 import * as vscode from 'vscode';
 import { SolveDockViewProvider } from './views/SolveDockViewProvider';
 import { SolutionStore } from './knowledge/SolutionStore';
+import { SearchService } from './search/SearchService';
+import { registerSearchKnowledgeCommand } from './commands/searchKnowledge';
 
 /**
  * Called when the SolveDock extension is activated.
  */
-export function activate(context: vscode.ExtensionContext): void {
+export async function activate(context: vscode.ExtensionContext): Promise<void> {
   console.log('SolveDock is now active.');
 
   const workspaceRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
   const solutionStore = new SolutionStore(workspaceRoot);
+  const searchService = new SearchService();
+
+  // Index existing workspace solutions if available
+  if (workspaceRoot) {
+    try {
+      const { solutions } = await solutionStore.loadAllSolutions();
+      searchService.indexSolutions(solutions);
+    } catch (err) {
+      console.error('Failed to load initial solutions for search index:', err);
+    }
+  }
 
   // Register SolveDock sidebar Webview View Provider
-  const provider = new SolveDockViewProvider(context.extensionUri);
+  const provider = new SolveDockViewProvider(context.extensionUri, solutionStore, searchService);
   const viewDisposable = vscode.window.registerWebviewViewProvider(
     SolveDockViewProvider.viewType,
     provider
@@ -23,16 +36,8 @@ export function activate(context: vscode.ExtensionContext): void {
     vscode.commands.executeCommand('workbench.view.extension.solvedock');
   });
 
-  // Register: SolveDock: Search Solutions (placeholder — Phase 4)
-  const searchCmd = vscode.commands.registerCommand(
-    'solvedock.searchSolutions',
-    () => {
-      vscode.commands.executeCommand('workbench.view.extension.solvedock');
-      vscode.window.showInformationMessage(
-        'SolveDock: Search Solutions — type your query in the sidebar search bar.'
-      );
-    }
-  );
+  // Register: SolveDock: Search Solutions (Interactive Palette QuickPick search)
+  const searchCmd = registerSearchKnowledgeCommand(context, searchService);
 
   // Register: SolveDock: Create Solution (placeholder — Phase 5)
   const createCmd = vscode.commands.registerCommand(
@@ -54,6 +59,9 @@ export function activate(context: vscode.ExtensionContext): void {
           return;
         }
         const { solutions, errors } = await solutionStore.loadAllSolutions();
+        searchService.indexSolutions(solutions);
+        provider.refreshView(solutions);
+
         if (errors.length > 0) {
           vscode.window.showWarningMessage(
             `SolveDock: Loaded ${solutions.length} solution(s), with ${errors.length} error(s) in files.`
