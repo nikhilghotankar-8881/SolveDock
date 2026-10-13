@@ -1,7 +1,5 @@
 import * as vscode from 'vscode';
-import * as path from 'path';
 import { SearchService } from '../search/SearchService';
-import { SolutionStore } from '../knowledge/SolutionStore';
 import { Solution } from '../models/Solution';
 import { WorkspaceManager } from '../knowledge/WorkspaceManager';
 

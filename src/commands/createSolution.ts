@@ -15,6 +15,7 @@ export function generateSolutionTemplate(id: string, title: string = 'New Techni
   return `---
 id: ${id}
 title: ${title}
+createdAt: ${today}
 technology:
   - 
 tags:
