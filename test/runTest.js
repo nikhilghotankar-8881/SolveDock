@@ -7,10 +7,10 @@ async function main() {
     const extensionTestsPath = path.resolve(__dirname, './suite/index.js');
     console.log('Running VS Code extension integration tests via @vscode/test-electron...');
     await runTests({
-      extensionDevelopmentPath,
-      extensionTestsPath,
-      launchArgs: ['--disable-extensions'],
-    });
+    extensionDevelopmentPath,
+    extensionTestsPath,
+    version: '1.141.0',
+});
     console.log('VS Code integration tests finished successfully.');
   } catch (err) {
     console.error('Failed to run integration tests:', err);
