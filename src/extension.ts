@@ -1,13 +1,20 @@
 import * as vscode from 'vscode';
+import { SolveDockViewProvider } from './views/SolveDockViewProvider';
 
 /**
  * Called when the SolveDock extension is activated.
- * Activation is triggered by the events defined in package.json activationEvents.
  */
 export function activate(context: vscode.ExtensionContext): void {
   console.log('SolveDock is now active.');
 
-  // Register: SolveDock: Open
+  // Register SolveDock sidebar Webview View Provider
+  const provider = new SolveDockViewProvider(context.extensionUri);
+  const viewDisposable = vscode.window.registerWebviewViewProvider(
+    SolveDockViewProvider.viewType,
+    provider
+  );
+
+  // Register: SolveDock: Open (focuses sidebar container)
   const openCmd = vscode.commands.registerCommand('solvedock.open', () => {
     vscode.commands.executeCommand('workbench.view.extension.solvedock');
   });
@@ -16,8 +23,9 @@ export function activate(context: vscode.ExtensionContext): void {
   const searchCmd = vscode.commands.registerCommand(
     'solvedock.searchSolutions',
     () => {
+      vscode.commands.executeCommand('workbench.view.extension.solvedock');
       vscode.window.showInformationMessage(
-        'SolveDock: Search Solutions — coming in Phase 4.'
+        'SolveDock: Search Solutions — type your query in the sidebar search bar.'
       );
     }
   );
@@ -37,12 +45,12 @@ export function activate(context: vscode.ExtensionContext): void {
     'solvedock.refreshKnowledge',
     () => {
       vscode.window.showInformationMessage(
-        'SolveDock: Refresh Knowledge — coming in Phase 3.'
+        'SolveDock: Refresh Knowledge — reloading local knowledge.'
       );
     }
   );
 
-  context.subscriptions.push(openCmd, searchCmd, createCmd, refreshCmd);
+  context.subscriptions.push(viewDisposable, openCmd, searchCmd, createCmd, refreshCmd);
 }
 
 /**

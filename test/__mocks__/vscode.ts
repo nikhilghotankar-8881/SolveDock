@@ -7,4 +7,10 @@ export const commands = {
 
 export const window = {
   showInformationMessage: vi.fn(),
+  registerWebviewViewProvider: vi.fn().mockReturnValue({ dispose: vi.fn() }),
+};
+
+export const Uri = {
+  file: (path: string) => ({ fsPath: path, path, scheme: 'file' }),
+  parse: (uri: string) => ({ fsPath: uri, path: uri, scheme: 'file' }),
 };
