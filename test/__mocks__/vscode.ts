@@ -7,7 +7,19 @@ export const commands = {
 
 export const window = {
   showInformationMessage: vi.fn(),
+  showWarningMessage: vi.fn(),
+  showErrorMessage: vi.fn(),
   registerWebviewViewProvider: vi.fn().mockReturnValue({ dispose: vi.fn() }),
+};
+
+export const workspace = {
+  workspaceFolders: [
+    {
+      uri: { fsPath: '/test/workspace' },
+      name: 'test-workspace',
+      index: 0,
+    },
+  ],
 };
 
 export const Uri = {

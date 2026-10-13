@@ -1,11 +1,15 @@
 import * as vscode from 'vscode';
 import { SolveDockViewProvider } from './views/SolveDockViewProvider';
+import { SolutionStore } from './knowledge/SolutionStore';
 
 /**
  * Called when the SolveDock extension is activated.
  */
 export function activate(context: vscode.ExtensionContext): void {
   console.log('SolveDock is now active.');
+
+  const workspaceRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
+  const solutionStore = new SolutionStore(workspaceRoot);
 
   // Register SolveDock sidebar Webview View Provider
   const provider = new SolveDockViewProvider(context.extensionUri);
@@ -40,13 +44,28 @@ export function activate(context: vscode.ExtensionContext): void {
     }
   );
 
-  // Register: SolveDock: Refresh Knowledge (placeholder — Phase 3)
+  // Register: SolveDock: Refresh Knowledge
   const refreshCmd = vscode.commands.registerCommand(
     'solvedock.refreshKnowledge',
-    () => {
-      vscode.window.showInformationMessage(
-        'SolveDock: Refresh Knowledge — reloading local knowledge.'
-      );
+    async () => {
+      try {
+        if (!workspaceRoot) {
+          vscode.window.showInformationMessage('SolveDock: Open a workspace to load solutions.');
+          return;
+        }
+        const { solutions, errors } = await solutionStore.loadAllSolutions();
+        if (errors.length > 0) {
+          vscode.window.showWarningMessage(
+            `SolveDock: Loaded ${solutions.length} solution(s), with ${errors.length} error(s) in files.`
+          );
+        } else {
+          vscode.window.showInformationMessage(
+            `SolveDock: Refreshed knowledge base (${solutions.length} solution(s) loaded).`
+          );
+        }
+      } catch (err: any) {
+        vscode.window.showErrorMessage(`SolveDock refresh failed: ${err.message || String(err)}`);
+      }
     }
   );
 
